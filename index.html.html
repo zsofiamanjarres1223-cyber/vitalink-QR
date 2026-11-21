@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VitaLink QR</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F6F9;--card:#fff;--ink:#12263A;--mut:#5A6B7C;--line:#DDE5EC;--brand:#0E7490;--brand2:#155E75;--ok:#15803D;--warn:#FEF2F2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sora",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.5px}.logo b{color:var(--brand)}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav button{border:0;background:transparent;color:var(--mut);font:600 13px Sora,system-ui,sans-serif;padding:8px 12px;border-radius:99px;cursor:pointer}
+nav button.on{background:var(--ink);color:var(--bg)}
+main{max-width:920px;margin:0 auto;padding:22px 18px 60px}
+section{display:none}section.on{display:block}
+.hero{padding:34px 22px;border-radius:26px;background:linear-gradient(135deg,#C1121F,#E5383B 45%,#0E7C86);color:#fff;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(26px,6vw,42px);line-height:1.1;margin:0 0 10px;letter-spacing:-1px}
+.hero p{margin:0;max-width:520px;opacity:.95}
+.pulse{position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:p 2.4s infinite}
+@keyframes p{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+h2{font-size:22px;margin:30px 0 12px;letter-spacing:-.4px}
+.portals{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.portal{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-align:left;cursor:pointer;color:var(--ink);font-family:inherit;transition:transform .15s}
+.portal:hover{transform:translateY(-3px)}
+.portal .ic{font-size:30px}.portal h3{margin:8px 0 4px}.portal p{margin:0;color:var(--mut);font-size:14px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--line);color:var(--mut);margin-top:10px}.tag.live{background:var(--ok);color:#fff}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 16px 58px;position:relative;font-size:14px}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:14px;width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800}
+.step b{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
+video{width:100%;max-height:300px;border-radius:14px;background:#000;display:none;object-fit:cover}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{border:0;border-radius:12px;padding:12px 16px;font:700 14px Sora,system-ui,sans-serif;cursor:pointer;background:var(--brand);color:#fff;text-decoration:none;display:inline-block}
+.btn.alt{background:var(--ink);color:var(--bg)}.btn.ok{background:var(--ok)}
+input{flex:1;min-width:180px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 14px Sora,system-ui,sans-serif}
+select,textarea{flex:1;min-width:180px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 14px Sora,system-ui,sans-serif}
+textarea{min-height:70px;resize:vertical}
+input[type=checkbox]{flex:none;min-width:0;width:auto}
+.chk{display:flex;gap:8px;font-size:13px;color:var(--mut);margin-top:8px}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.qrc{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+#qrbox{background:#fff;padding:12px;border-radius:14px;line-height:0}
+.mono{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:var(--brand2);word-break:break-all}
+.fld{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px}
+.fld span{font-size:12px;font-weight:700;color:var(--mut)}
+.fld input,.fld select,.fld textarea{flex:none;width:100%;min-width:0}
+.hero{text-align:center}.hero p{margin:0 auto 14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.chips span{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.45);border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700}
+.two{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.role{padding:0;overflow:hidden;cursor:default}.role:hover{transform:none}
+.role .top{height:120px;display:grid;place-items:center;font-size:52px;letter-spacing:8px}
+.role.p .top{background:linear-gradient(135deg,#7FE3C4,#12B886)}.role.m .top{background:linear-gradient(135deg,#FFB3BB,#FF4D5E)}
+.role .bd{padding:16px 18px 18px}.role .bd p{margin:4px 0 12px;color:var(--mut);font-size:14px}
+.role .btn{width:100%;margin-top:8px;text-align:center}
+.div{border-top:2px dashed var(--line);margin:26px 0 14px;padding-top:14px;text-align:center}
+.div a{color:var(--brand2);font-weight:700;cursor:pointer;font-size:14px}
+.pay{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}.price{font-size:24px;font-weight:800;color:var(--brand)}
+#mail{display:none;position:fixed;inset:0;z-index:20;background:rgba(8,12,30,.6);align-items:center;justify-content:center;padding:18px}#mail.on{display:flex}
+.mc{background:var(--card);border-radius:18px;max-width:480px;width:100%;padding:18px}.mh{font-weight:800;margin-bottom:8px}.mm{font-size:13px;color:var(--mut);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}.mb{font-size:14px;margin-bottom:14px}
+.phone{border:2px solid var(--ok);border-radius:18px;padding:14px;margin:12px 0;background:var(--bg)}
+body{background-attachment:fixed;background-image:radial-gradient(circle at 6% 0%,var(--g1),transparent 45%),radial-gradient(circle at 96% 14%,var(--g2),transparent 48%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><path d='M26 16h8v10h10v8H34v10h-8V34H16v-8h10z' fill='red' fill-opacity='.07'/></svg>")}
+main{position:relative;z-index:1}
+.ecgbg{position:fixed;left:0;right:0;bottom:0;height:90px;pointer-events:none;opacity:.4;z-index:0}.ecgbg svg{width:100%;height:100%}
+.ecgbg path{fill:none;stroke:var(--brand);stroke-width:2.5;stroke-dasharray:1600;stroke-dashoffset:1600;animation:ecg2 6s linear infinite}
+@keyframes ecg2{to{stroke-dashoffset:-1600}}
+@media (prefers-reduced-motion:reduce){.ecgbg path{animation:none;stroke-dashoffset:0}}
+.ecg{width:min(380px,90%);height:46px;display:block;margin:6px auto 2px}
+.ecg path{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:520;stroke-dashoffset:520;animation:ecg 3s linear infinite}
+@keyframes ecg{to{stroke-dashoffset:-520}}
+@media (prefers-reduced-motion:reduce){.ecg path{animation:none;stroke-dashoffset:0}}
+#fv,#lv{width:100%;max-width:260px;border-radius:14px;background:#000;margin:8px 0}
+#fp{width:96px;height:96px;border-radius:14px;display:none;margin:8px 0;object-fit:cover;border:2px solid var(--ok)}
+.rec{border:2px solid var(--ok)}.rh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}.ok2{background:var(--ok);color:#fff;font-weight:800;font-size:12px;padding:4px 10px;border-radius:99px}
+.rt div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.rt span{color:var(--mut)}.rt b{text-align:right}
+.facebox{border:1px dashed var(--brand2);border-radius:16px;padding:12px;margin-top:12px}
+.sos{background:#C1121F;color:#fff;text-align:center;font-size:12px;font-weight:700;padding:6px 10px}
+.hero::before{content:"";position:absolute;inset:0;opacity:.13;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='46' height='46'><path d='M20 12h6v8h8v6h-8v8h-6v-8h-8v-6h8z' fill='white'/></svg>")}
+.hero>*:not(.pulse){position:relative}
+h2::before{content:"✚";color:var(--brand);margin-right:8px;font-size:.8em}
+.card{border-top:3px solid var(--brand2)}.rec{border-top:3px solid var(--ok)}
+.camw{position:relative;max-width:260px;margin:8px 0}.camw video{display:block;width:100%;margin:0;transform:scaleX(-1)}
+.oval{position:absolute;inset:8% 20%;border:3px dashed rgba(255,255,255,.9);border-radius:50%;pointer-events:none;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
+.camw{overflow:hidden;border-radius:14px}
+#toast{z-index:100}
+#pdfov{position:fixed;inset:0;z-index:70;background:#0f172a;display:flex;flex-direction:column}
+.pdfbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));color:#fff}
+.pdfbar .btn{padding:8px 12px;text-decoration:none}
+#pdfov iframe{flex:1;border:0;background:#fff;width:100%}
+.pdfno{flex:1;display:grid;place-items:center;color:#fff;text-align:center;padding:24px;font-size:18px;line-height:1.5}
+.dep{flex:1;min-width:180px;display:flex}.dep .fld{width:100%}
+.opt{border:2px solid var(--line);border-radius:18px;padding:14px;background:var(--bg)}
+input:disabled,select:disabled,textarea:disabled{opacity:1;-webkit-text-fill-color:var(--ink);cursor:default}
+input:disabled::placeholder,textarea:disabled::placeholder{-webkit-text-fill-color:var(--mut);opacity:.55}
+.sechead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px}.sechead h3{margin:0}
+.ed .fld input,.ed .fld select,.ed .fld textarea{border-color:var(--brand2)}
+.fld .falta,.ed .fld .falta{border:2px dashed var(--brand)!important;background:var(--warn)!important}
+.snap{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.camw.okf{outline:3px solid var(--ok);outline-offset:-3px}
+.badge{position:absolute;left:8px;right:8px;bottom:8px;text-align:center;font:800 13px Sora,system-ui,sans-serif;padding:7px 10px;border-radius:99px;background:var(--ok);color:#fff}.badge.bad{background:var(--brand)}
+.scan{position:absolute;left:0;right:0;top:4%;height:3px;background:var(--brand2);box-shadow:0 0 14px 5px var(--brand2);display:none;pointer-events:none;animation:scu 1s ease-in-out infinite}
+.camw.go .scan{display:block}
+@keyframes scu{from{top:96%}to{top:2%}}
+.camw img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.res{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.28)}
+.res b{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:52px;line-height:1;background:var(--ok);box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.res.bad b{background:var(--brand)}
+@media (prefers-reduced-motion:reduce){.scan{animation:none;top:50%}}
+.tb{width:100%;border-collapse:collapse;font-size:13px}.tb th,.tb td{text-align:left;padding:8px;border-top:1px solid var(--line)}.tb th{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+[hidden]{display:none!important}
+.chip{border:1px dashed var(--brand2);background:transparent;color:var(--brand2);border-radius:99px;padding:6px 12px;font:600 12px Sora,system-ui,sans-serif;cursor:pointer}
+.msg{margin-top:10px;font-size:14px;color:var(--mut)}.msg.err{color:var(--brand);font-weight:700}
+.ficha{border:2px solid var(--brand);border-radius:22px;overflow:hidden;background:var(--card);margin-top:16px}
+.fh{background:var(--brand);color:#fff;padding:16px 18px}.fh h3{margin:0;font-size:22px}.fh span{opacity:.9;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;padding:16px}
+.box{border:1px solid var(--line);border-radius:16px;padding:14px}.box small{color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.6px;font-size:11px}
+.blood{font-size:54px;font-weight:800;color:var(--brand);line-height:1}
+.alert{background:var(--warn);border-color:var(--brand)}.alert strong{color:var(--brand);font-size:20px}
+.safe{border-color:var(--ok)}
+.contact{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)}
+.contact:first-of-type{border-top:0}
+.soon{text-align:center;padding:36px 20px}.soon .ic{font-size:44px}
+.soon ul{display:inline-block;text-align:left;color:var(--mut);margin:10px 0 0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+/* ===== Tema profesional: azul petróleo sobrio ===== */
+body{background:var(--bg);background-image:none}
+.sos{background:#12263A}
+.hero{background:linear-gradient(135deg,#0B4F63,#0E7490)}
+.hero::before{opacity:.05}
+.ecgbg{display:none}
+.role.p .top{background:linear-gradient(135deg,#DCEFF3,#B7DDE6)}.role.m .top{background:linear-gradient(135deg,#E4EAF1,#C5D1DF)}
+.alert{background:#FEF2F2;border-color:#B42318}.alert strong{color:#B42318}
+.card{border-top:3px solid var(--brand)}
+.stp{display:flex;align-items:flex-start;justify-content:center;gap:6px;margin:4px 0 20px}
+.sp{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--mut)}
+.sp i{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;background:var(--card)}
+.sp.cur{color:var(--ink)}.sp.cur i{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 0 0 4px rgba(14,116,144,.18)}
+.sp.done{color:var(--ok)}.sp.done i{border-color:var(--ok);color:var(--ok)}
+.ln{flex:1;max-width:60px;height:2px;background:var(--line);margin-top:17px}.ln.done{background:var(--ok)}
+.sec{font-size:12px;font-weight:800;letter-spacing:.8px;color:var(--brand);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.swb.kid{width:60px;height:60px;border-radius:18px;font-size:30px;line-height:1;display:grid;place-items:center;padding:0}
+.swb{width:40px;height:40px;border-radius:50%;border:3px solid var(--card);background:var(--c);cursor:pointer;box-shadow:0 0 0 2px var(--line)}.swb.on{box-shadow:0 0 0 3px var(--brand)}
+.two2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0}
+.chip.on{background:var(--brand);color:#fff;border-style:solid;border-color:var(--brand)}
+.bl{margin:10px 0 14px;padding-left:18px;color:var(--mut);font-size:14px}.bl li{margin:5px 0}
+.prev{text-align:center}
+.sr{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line);font-size:14px}.sr span{color:var(--mut)}.sr b{text-align:right}
+</style>
+</head>
+<body>
+<div class="sos">🚑 ¿Emergencia? Llama al <b>123</b> · VitaLink QR ayuda a que te atiendan mejor</div>
+<header>
+  <div class="logo" id="home" style="cursor:pointer" title="Volver al inicio"><span style="color:var(--brand)">✚</span> Vita<b>Link</b> QR</div>
+  
+</header>
+<main>
+
+<section id="v-gate" class="on">
+  <div class="hero"><div class="pulse"></div>
+    <svg width="76" height="76" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#fff"/><g fill="#0E7490"><rect x="10" y="10" width="16" height="16" rx="3"/><rect x="38" y="10" width="16" height="16" rx="3"/><rect x="10" y="38" width="16" height="16" rx="3"/></g><g fill="#12263A"><rect x="38" y="38" width="7" height="7"/><rect x="47" y="47" width="7" height="7"/><rect x="38" y="47" width="7" height="7"/></g></svg>
+    <svg class="ecg" viewBox="0 0 400 50" aria-hidden="true"><path d="M0 25H120L135 25L145 5L160 45L172 25H260L272 25L282 12L292 38L300 25H400"/></svg>
+    <h1>Registra tu manilla VitaLink QR</h1>
+    <p>Compra tu manilla, crea tu cuenta segura y entra a la plataforma para completar tu ficha médica.</p>
+    <div class="chips"><span>🛒 Compras tu manilla</span><span>🔑 Creas tu cuenta segura</span><span>🙂 Registras tu rostro</span></div>
+  </div>
+  <div style="height:16px"></div>
+  <div id="acc"></div>
+  <div class="div"><a data-act="adm">🛡️ Acceso de administrador</a> &nbsp;·&nbsp; <a data-act="libre">🚑 Portal del paramédico</a>
+    <p class="msg" style="margin:14px 0 8px;font-weight:700;letter-spacing:.5px">FICHA DE DEMOSTRACIÓN</p>
+    <div class="row" style="justify-content:center"><button class="chip" data-demo="par">🚑 Ficha de emergencia de Laura</button></div></div>
+</section>
+
+<section id="v-inicio">
+  <div id="ses" class="row" style="justify-content:space-between;align-items:center;margin:0 0 12px"></div>
+  <div class="hero"><div class="pulse"></div>
+    <svg width="76" height="76" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#fff"/><g fill="#0E7490"><rect x="10" y="10" width="16" height="16" rx="3"/><rect x="38" y="10" width="16" height="16" rx="3"/><rect x="10" y="38" width="16" height="16" rx="3"/></g><g fill="#12263A"><rect x="38" y="38" width="7" height="7"/><rect x="47" y="47" width="7" height="7"/><rect x="38" y="47" width="7" height="7"/></g></svg>
+    <svg class="ecg" viewBox="0 0 400 50" aria-hidden="true"><path d="M0 25H120L135 25L145 5L160 45L172 25H260L272 25L282 12L292 38L300 25H400"/></svg>
+    <h1>Bienvenido a VitaLink QR</h1>
+    <p>Tu manilla con código QR ya está activa. Elige cómo vas a usar la plataforma.</p>
+    <div class="chips"><span>⚡ Ficha en segundos</span><span>📲 QR en tu manilla</span><span>🚫 Sin apps para el paramédico</span><span>👨‍👩‍👧 Aviso a tu familia</span></div>
+  </div>
+  <h2>¿Quién eres?</h2>
+  <div class="portals two">
+    <div class="portal role p"><div class="top">🩺⌚</div><div class="bd"><h3 style="margin:0">PACIENTE</h3><p>Completa tu ficha médica, genera tu código QR y mantenlo al día.</p><button class="btn" data-act="pac">Entrar como paciente</button></div></div>
+    <div class="portal role m"><div class="top">🚑📱</div><div class="bd"><h3 style="margin:0">PARAMÉDICO</h3><p>Escanea el QR de la manilla y ve la ficha de emergencia al instante.</p><button class="btn" data-act="par">Escanear un QR</button></div></div>
+  </div>
+  <h2>¿Cómo funciona?</h2>
+  <div class="steps">
+    <div class="step"><b>Completas tu ficha</b>Registra tus datos médicos y tus contactos de emergencia.</div>
+    <div class="step"><b>Generas tu QR</b>Lo llevas en tu manilla.</div>
+    <div class="step"><b>Te escanean y te cuidan</b>El paramédico ve tu ficha y avisa a tu familia.</div>
+  </div>
+</section>
+
+<section id="v-paramedico">
+  <button class="chip" data-act="inicio" style="margin-bottom:12px">← Volver al inicio</button>
+  <h2 style="margin-top:6px">🚑 Portal del paramédico</h2>
+  <div class="steps">
+    <div class="step"><b>Identifica</b>Escanea el código QR de la pulsera o el rostro del paciente: sirve cualquiera.</div>
+    <div class="step"><b>Revisa</b>Mira primero la sangre y las alergias.</div>
+    <div class="step"><b>Avisa</b>Llama o escribe al familiar con un toque.</div>
+  </div>
+  <div class="card" id="pstat" style="margin-top:16px"></div>
+  <div class="card" style="margin-top:16px">
+    <h3 style="margin:0 0 4px">¿Cómo quieres identificar al paciente?</h3>
+    <div class="msg" style="margin:0 0 12px">Usa <b>cualquiera de los dos</b>: el código QR o el reconocimiento facial. Los dos abren la misma ficha de emergencia.</div>
+    <div class="portals two">
+      <div class="opt">
+        <h3 style="margin:0 0 4px">📷 Código QR</h3>
+        <div class="msg" style="margin:0 0 8px">Escanea el QR de la pulsera o escribe el código que recibió el paciente.</div>
+        <video id="cam" playsinline muted></video><canvas id="cv" hidden></canvas>
+        <div class="row">
+          <button class="btn" id="bCam">📷 Abrir cámara y escanear</button>
+          <button class="btn alt" id="bStop" hidden>Detener cámara</button>
+        </div>
+        <div class="row">
+          <input id="code" placeholder="O escribe el código, ej. VLQR-0001-A1B2C3" autocomplete="off">
+          <button class="btn ok" id="bGo">Consultar</button>
+        </div>
+        <div class="row"><span class="msg" style="margin:0">Prueba con una demostración:</span>
+          <button class="chip" data-c="VLQR-0001-A1B2C3">Laura (VLQR-0001)</button>
+          <button class="chip" data-c="VLQR-0002-D4E5F6">Andrés (VLQR-0002)</button>
+        </div>
+      </div>
+      <div class="opt">
+        <h3 style="margin:0 0 4px">🙂 Reconocimiento facial</h3>
+        <div class="msg" id="pfm" style="margin:0 0 8px">Mira al círculo y reconoce al paciente de una vez.</div>
+        <div class="camw" style="display:none"><video id="pv" playsinline muted></video><div class="oval"></div><div class="scan"></div></div>
+        <div class="row"><button class="btn alt" id="pf" type="button">🙂 Escanear rostro del paciente</button></div>
+      </div>
+    </div>
+    <div class="msg" id="msg">Esperando un código QR o un rostro…</div>
+  </div>
+  <div id="ficha"></div>
+</section>
+
+<section id="v-paciente">
+  <button class="chip" data-act="inicio" style="margin-bottom:12px">← Volver al inicio</button>
+  <h2 style="margin-top:6px">🩺 Portal del paciente</h2>
+  <p class="msg" style="margin:0 0 12px">Crea tu ficha médica, genera tu QR y mantenla al día.</p>
+  <div id="pac"></div>
+</section>
+
+<section id="v-verif">
+  <h2 style="margin-top:6px">🚑 Verificación de paramédico</h2>
+  <div class="card">
+    <div class="msg" id="vtxt" style="margin:0 0 10px">Mira a la cámara: te reconocemos de una vez.</div>
+    <div class="facebox" style="margin-top:0"><b>🙂 Reconocimiento facial del paramédico</b>
+      <div class="msg" id="xm" style="margin:4px 0 6px">Preparando cámara…</div>
+      <div class="camw" style="display:none"><video id="xv" playsinline muted></video><div class="oval"></div><div class="scan"></div></div>
+      <div class="row"><button class="btn alt" id="xb" type="button" hidden>🙂 Volver a escanear mi rostro</button></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="xreg" type="button">📝 Registrarme como paramédico</button><button class="chip" id="xcan" type="button">Cancelar</button></div>
+  </div>
+</section>
+<section id="v-regpar">
+  <button class="chip" id="rpback" type="button" style="margin-bottom:12px">← Volver</button>
+  <h2 style="margin-top:6px">📝 Registro de paramédico</h2>
+  <div class="card">
+    <div class="msg" style="margin:0 0 10px">Crea tu cuenta y registra tu rostro una sola vez. Tu cuenta quedará <b>pendiente</b> hasta que un administrador la apruebe. Después, cada vez que escanees el QR de un paciente, te reconocemos de una vez y se abre su ficha.</div>
+    <div class="row"><label class="fld" for="rp_mail"><span>Correo electrónico</span><input id="rp_mail" type="email" autocomplete="off"></label></div>
+    <div class="row"><label class="fld" for="rp_pw"><span>Contraseña (mínimo 8 caracteres)</span><input id="rp_pw" type="password" autocomplete="new-password"></label><label class="fld" for="rp_pw2"><span>Repite tu contraseña</span><input id="rp_pw2" type="password" autocomplete="new-password"></label></div>
+    <div class="row"><label class="fld" for="rp_nom"><span>Nombres</span><input id="rp_nom" autocomplete="off"></label><label class="fld" for="rp_ape"><span>Apellidos</span><input id="rp_ape" autocomplete="off"></label></div>
+    <div class="row"><label class="fld" for="rp_doc"><span>Documento de identidad</span><input id="rp_doc" inputmode="numeric" autocomplete="off"></label><label class="fld" for="rp_tel"><span>Teléfono (opcional)</span><input id="rp_tel" inputmode="tel" autocomplete="off"></label></div>
+    <div class="row"><label class="fld" for="rp_inst"><span>Institución o ambulancia donde trabajas</span><input id="rp_inst" placeholder="Ej. Hospital Universitario, Cruz Roja, Ambulancias X" autocomplete="off"></label><label class="fld" for="rp_lic"><span>N.º de licencia o tarjeta profesional (opcional)</span><input id="rp_lic" autocomplete="off"></label></div>
+    <div class="facebox"><b>🙂 Reconocimiento facial</b>
+      <div class="msg" id="rm" style="margin:4px 0 6px">Mira al círculo y tu rostro se registra de una vez.</div>
+      <div class="camw" style="display:none"><video id="rv" playsinline muted></video><div class="oval"></div><div class="scan"></div></div>
+      <div class="row"><button class="btn alt" id="rpf" type="button">🙂 Registrar mi rostro</button></div>
+    </div>
+    <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px"><input type="checkbox" id="rp_ok" style="margin-top:3px"><span>Declaro que soy personal de salud o de emergencias, y autorizo guardar mi imagen facial para verificar mi identidad al consultar fichas de pacientes.</span></label>
+    <div class="row"><button class="btn" id="rpgo" type="button">✅ Registrarme</button></div>
+    <div class="msg err" id="rpm"></div>
+  </div>
+</section>
+<section id="v-admin">
+  <button class="chip" data-act="inicio" style="margin-bottom:12px">← Volver al inicio</button>
+  <h2 style="margin-top:6px">Portal del administrador</h2>
+  <div id="adm"></div>
+</section>
+
+</main>
+<div class="ecgbg"><svg viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M0 45H200L215 45L228 12L246 78L260 45H520L535 45L548 20L564 70L576 45H900L915 45L928 8L946 82L960 45H1200"/></svg></div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const DB={
+ "VLQR-0001-A1B2C3":{n:"Laura Camila Pérez Gómez",doc:"1001234567",nac:"2001-03-15",sangre:"O+",alergias:"Penicilina",enf:"Asma",med:"Salbutamol",obs:"Usa inhalador en crisis",eps:"Sura",dis:"Ninguno",cir:"Ninguna",don:"Sí",
+  cont:[{n:"María Gómez",p:"Madre",t:"3205557788"},{n:"Carlos Pérez",p:"Padre",t:"3157778899"}]},
+ "VLQR-0002-D4E5F6":{n:"Andrés Felipe Ruiz Torres",doc:"1007654321",nac:"1998-09-02",sangre:"A-",alergias:"Ninguna conocida",enf:"Diabetes tipo 1",med:"Insulina",obs:"Requiere control de glucosa",eps:"Sanitas",dis:"Bomba de insulina",cir:"Apendicectomía en 2019",don:"No sé",
+  cont:[{n:"Sofía Torres",p:"Hermana",t:"3126669900"}]}
+};
+const $=s=>document.querySelector(s);
+let stream=null,scanning=false,libre=false,lastV=null;
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2600+t.length*30)}
+function sesion(){const d=load();return d.s&&d.u[d.s]||null}
+function pintaSesion(){const u=sesion(),b=$("#ses");if(!b)return;
+ const rol=u&&({paciente:"Paciente",paramedico:"Paramédico",admin:"Administrador"}[u.rol]||"");
+ b.innerHTML=u?`<span class="msg" style="margin:0">👋 <b>${esc(u.nom||u.usr||"")}</b> · ${rol}${u.ven?" · acceso hasta el "+fecha(u.ven):""}</span><button class="chip" id="ssal" type="button">Cerrar sesión</button>`:"";
+ if(u)$("#ssal").onclick=async()=>{await cerrarSesion();show("gate")}}
+function show(v){
+  const u=sesion(),ok=!!u,rol=u&&u.rol;
+  const casa=rol==="paramedico"?"paramedico":rol==="admin"?"admin":"inicio";
+  if(!["gate","inicio","paciente","paramedico","admin","verif","regpar"].includes(v))v=ok?"inicio":"gate";
+  if(!ok){if(!["verif","regpar"].includes(v)&&!(v==="paramedico"&&libre))v="gate"}
+  else{
+   if(v==="gate"||v==="regpar")v=casa;
+   if(v==="paciente"&&rol!=="paciente")v=casa;
+   if(v==="paramedico"&&rol!=="paramedico"&&!libre)v=rol==="admin"?"admin":"inicio";
+   if(v==="admin"&&rol!=="admin")v=casa;
+   if(v==="verif"&&rol!=="paramedico")v=casa;
+  }
+  document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  if(v!=="paramedico")stopCam();if(v==="admin")renderAdm();if(v==="gate")renderGate();else{const ac=$("#acc");if(ac)ac.innerHTML=""}if(v==="paciente")renderPac();const nuevo=v!==lastV;lastV=v;if(v==="inicio")pintaSesion();if(nuevo&&v==="verif")iniciaVerif();if(nuevo&&v==="regpar")iniciaReg();if(v==="paramedico")pintaPar();
+  if(location.hash!=="#"+v)location.hash=v;
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{$("#code").value=b.dataset.c;consultar(b.dataset.c)});
+$("#bGo").onclick=()=>consultar($("#code").value);
+$("#code").addEventListener("keydown",e=>{if(e.key==="Enter")consultar(e.target.value)});
+
+function edad(f){const d=new Date(f),h=new Date();let a=h.getFullYear()-d.getFullYear();if(h<new Date(h.getFullYear(),d.getMonth(),d.getDate()))a--;return a}
+function codeFrom(raw){const t=String(raw||""),k=/[?&]ficha=([^&#\s]+)/i.exec(t);if(k){try{return decodeURIComponent(k[1])}catch(e){return k[1]}}return t}
+let ULT=null,ULOC=null;
+function unes(x){return String(x==null?"":x).replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
+function waNum(t){const d=String(t).replace(/\D/g,"");return d.length===10?"57"+d:d}
+function pideUbic(){if(!navigator.geolocation)return;try{navigator.geolocation.getCurrentPosition(g=>{ULOC={lat:g.coords.latitude.toFixed(5),lon:g.coords.longitude.toFixed(5)}},()=>{},{timeout:8000,maximumAge:60000})}catch(e){}}
+function textoAviso(c,p){const u=sesion(),q=u&&u.rol==="paramedico"?u.nom+(u.inst?" ("+u.inst+")":""):"el servicio de emergencias";
+ return "🚨 VitaLink QR - Aviso de emergencia\nHola "+unes(c.n)+". Te informamos que "+unes(p.n)+" necesita atención de emergencia y está siendo atendido(a) por "+q+".\nFecha y hora: "+new Date().toLocaleString("es-CO")+(ULOC?"\nUbicación: https://maps.google.com/?q="+ULOC.lat+","+ULOC.lon:"")+"\nPor favor comunícate lo antes posible."}
+function avisa(tipo,c,p){
+ if(!c){toast("No hay un contacto para avisar.");return}
+ const tx=textoAviso(c,p),tel=unes(c.t),
+  url=tipo==="wa"?"https://wa.me/"+waNum(tel)+"?text="+encodeURIComponent(tx):"sms:"+tel.replace(/[^\d+]/g,"")+(/iPhone|iPad/.test(navigator.userAgent)?"&":"?")+"body="+encodeURIComponent(tx);
+ if(tipo==="wa")window.open(url,"_blank");else location.href=url}
+async function registraEmergencia(code,btn){
+ if(DB[code]){toast("En la ficha de demostración no se guarda historial.");return}
+ if(!confirm("¿Registrar esta emergencia en el historial del paciente?\n\nQuedará guardada con la fecha, la hora y tu nombre."))return;
+ btn.disabled=true;const u=sesion();let r;
+ try{r=await sb.rpc("registrar_emergencia",{p_codigo:code,p_nota:"Emergencia registrada por "+(u?u.nom+(u.inst?" ("+u.inst+")":""):"un paramédico")+(ULOC?". Ubicación aproximada: "+ULOC.lat+","+ULOC.lon:"")})}catch(e){r={error:e}}
+ if(r.error){btn.disabled=false;toast(errTxt(r.error));return}
+ btn.textContent="✅ Emergencia registrada: "+new Date().toLocaleString("es-CO");toast("✅ Emergencia registrada en el historial del paciente.")}
+async function consultar(raw,metodo){
+  ULT=null;
+  const m=String(codeFrom(raw)).toUpperCase().match(/VLQR-[A-Z0-9-]+/);
+  const msg=$("#msg"),f=$("#ficha"),mal=t=>{msg.className="msg err";msg.textContent=t;f.innerHTML=""};
+  if(!m){mal("❌ Escribe o escanea un código válido (ej. VLQR-0001-A1B2C3).");return}
+  const code=m[0];let p=DB[code]||null;
+  if(!p){
+   const u=sesion();
+   if(!u||u.rol!=="paramedico"){pedirLogin(code);return}
+   if(u.estado!=="aprobado"){mal("⛔ Tu cuenta de paramédico aún no está aprobada por un administrador.");return}
+   if(!parOK()){pedirVerif(code);return}
+   msg.className="msg";msg.textContent="⏳ Consultando…";
+   let r;try{r=await sb.rpc("consultar_ficha",{p_codigo:code,p_metodo:metodo||"qr"})}catch(e){r={error:e}}
+   if(r.error){mal("❌ "+errTxt(r.error));return}
+   if(!r.data){mal("❌ No encontramos este código. Verifica la pulsera e inténtalo de nuevo.");return}
+   if(r.data.vencido){mal("⏳ Esta pulsera ya no tiene acceso vigente (venció el "+fecha(Date.parse(r.data.acceso_hasta))+").");return}
+   p=fichaDe(r.data);
+  }
+  ULT={code,p};
+  msg.className="msg";msg.textContent="✅ Consulta registrada el "+new Date().toLocaleString("es-CO");
+  const sinAlergia=/ninguna/i.test(p.alergias);
+  f.innerHTML=`<div class="ficha"><div class="fh"><h3>${p.n}</h3><span>CC ${p.doc} · ${edad(p.nac)} años</span></div>
+  <div class="grid">
+   <div class="box"><small>Grupo sanguíneo</small><div class="blood">${p.sangre}</div></div>
+   <div class="box ${sinAlergia?"safe":"alert"}"><small>Alergias</small><div>${sinAlergia?"<strong style='color:var(--ok)'>"+p.alergias+"</strong>":"<strong>⚠️ "+p.alergias+"</strong>"}</div></div>
+   <div class="box"><small>Enfermedades</small><div>${p.enf}</div></div>
+   <div class="box"><small>Medicamentos</small><div>${p.med}</div></div>
+   ${p.eps?`<div class="box"><small>EPS / seguro</small><div>${p.eps}</div></div>`:""}${p.dis?`<div class="box"><small>Dispositivos médicos</small><div>${p.dis}</div></div>`:""}${p.cir?`<div class="box"><small>Cirugías u hospitalizaciones</small><div>${p.cir}</div></div>`:""}${p.don?`<div class="box"><small>Donante de órganos</small><div>${p.don}</div></div>`:""}${p.res?`<div class="box alert"><small>Restricciones o creencias médicas</small><div><strong>⚠️ ${p.res}</strong></div></div>`:""}${p.pes||p.est?`<div class="box"><small>Peso y estatura</small><div>${p.pes?p.pes+" kg":"—"} · ${p.est?p.est+" cm":"—"}</div></div>`:""}${p.mdc?`<div class="box"><small>Médico tratante</small><div>${p.mdc}</div></div>`:""}${p.afi?`<div class="box"><small>N.º de afiliación EPS</small><div>${p.afi}</div></div>`:""}${p.vac?`<div class="box"><small>Vacunas</small><div>${p.vac}</div></div>`:""}
+   <div class="box" style="grid-column:1/-1"><small>Observaciones</small><div>${p.obs}</div></div>
+   <div class="box" style="grid-column:1/-1"><small>Contactos de emergencia</small>
+    ${p.cont.map((c,i)=>`<div class="contact"><div><b>${c.n}</b><br><span style="color:var(--mut);font-size:13px">${c.p} · ${c.t}</span></div>
+    <div class="row" style="margin:0"><a class="btn ok" href="tel:${c.t}">📞 Llamar</a><button class="btn alt" data-wa="${i}" type="button">💬 WhatsApp</button><button class="btn alt" data-sms="${i}" type="button">✉️ SMS</button></div></div>`).join("")}<div class="msg" style="margin:8px 0 0">Los botones de WhatsApp y SMS abren la aplicación con el mensaje de aviso ya escrito: solo hay que pulsar enviar.</div></div>
+   <div class="row" style="grid-column:1/-1"><button class="btn" id="emg" type="button" style="background:#C1121F">🚨 Registrar emergencia en el historial</button><button class="btn alt" id="vpdf" type="button">📄 Ver ficha en PDF</button></div>
+  </div></div>`;
+  const bp=$("#vpdf");if(bp)bp.onclick=()=>abrePDF(m[0]);
+  f.querySelectorAll("[data-wa]").forEach(b=>b.onclick=()=>avisa("wa",p.cont[+b.dataset.wa],p));
+  f.querySelectorAll("[data-sms]").forEach(b=>b.onclick=()=>avisa("sms",p.cont[+b.dataset.sms],p));
+  const be=$("#emg");if(be)be.onclick=()=>registraEmergencia(code,be);
+  if(!DB[code])pideUbic();
+  f.scrollIntoView({behavior:"smooth"});
+}
+async function startCam(){
+  const msg=$("#msg");
+  try{
+    stopF();
+    try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})}catch(e1){stream=await navigator.mediaDevices.getUserMedia({video:true})}
+    const v=$("#cam");v.srcObject=stream;v.style.display="block";await v.play();
+    scanning=true;$("#bStop").hidden=false;msg.className="msg";msg.textContent="Apunta la cámara al código QR…";tick();
+  }catch(e){const n=e&&e.name;msg.className="msg err";
+   msg.textContent=!navigator.mediaDevices?"Este navegador no permite usar la cámara en esta página. Ábrela en Chrome o Edge, o publícala con https.":n==="NotAllowedError"?"La cámara está bloqueada. Toca el icono de cámara o el candado junto a la dirección, elige Permitir y vuelve a intentarlo.":n==="NotFoundError"?"No se encontró ninguna cámara en este dispositivo.":n==="NotReadableError"?"Otra aplicación o pestaña está usando la cámara. Ciérrala e inténtalo de nuevo.":"No pudimos abrir la cámara. Escribe el código o usa una demostración."}
+}
+function stopCam(){stopF();scanning=false;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const v=$("#cam");if(v){v.style.display="none"}const b=$("#bStop");if(b)b.hidden=true}
+function tick(){
+  if(!scanning)return;
+  const v=$("#cam"),c=$("#cv");
+  if(v.readyState===4&&typeof jsQR==="function"){
+    c.width=v.videoWidth;c.height=v.videoHeight;const x=c.getContext("2d");x.drawImage(v,0,0);
+    const r=jsQR(x.getImageData(0,0,c.width,c.height).data,c.width,c.height);
+    if(r&&r.data){stopCam();$("#code").value=codeFrom(r.data);consultar(r.data);return}
+  }
+  requestAnimationFrame(tick);
+}
+$("#pf").onclick=()=>{
+ const u=sesion();
+ if(!u||u.rol!=="paramedico"){toast("Inicia sesión como paramédico para escanear rostros.");pedirLogin(null);return}
+ if(u.estado!=="aprobado"){toast("Tu cuenta aún no está aprobada por un administrador.");return}
+ if(!parOK()){pedirVerif(null);return}
+ stopCam();
+ reconoce($("#pv"),$("#pf"),$("#pfm"),async(f,ui)=>{
+  let r;try{r=await sb.rpc("buscar_por_rostro",{p_plantilla:f.t})}catch(e){r={error:e}}
+  if(r.error||!r.data){ui.fail("Reconocimiento fallido. Intenta nuevamente con buena luz o usa el QR.");return}
+  ui.ok("Reconocimiento exitoso · confirma nombre y documento");
+  setTimeout(()=>{$("#code").value=r.data;consultar(r.data,"rostro")},700)})};
+$("#bCam").onclick=startCam;$("#bStop").onclick=stopCam;
+/* ===== Portal del paciente ===== */
+let MEM={u:{},s:null},modo="buy";
+const LS="vlqr_v1";
+/* ===== Servidor (Supabase): la caché solo guarda los datos de la cuenta que inició sesión ===== */
+const SB_URL="https://ejlkrdwgzjzvuctjigpf.supabase.co",SB_KEY="sb_publishable_sHz8-cnEkGO28Thty_Ut9Q_ZYZSoaTX";
+let sb=null;try{sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){}
+let recup=false;
+if(sb)sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY"){recup=true;setTimeout(()=>formNuevaClave(),0)}});
+function load(){return MEM}
+function save(d){MEM=d}
+const errTxt=e=>{const m=String((e&&e.message)||e||"");
+ return /Invalid login/i.test(m)?"Correo o contraseña incorrectos.":/already registered/i.test(m)?"Ya hay una cuenta con ese correo. Usa Ingresar.":/not confirmed/i.test(m)?"Debes confirmar tu correo antes de ingresar.":/rate limit/i.test(m)?"Demasiados intentos. Espera un momento e inténtalo de nuevo.":/should be different|same as the old/i.test(m)?"La nueva contraseña debe ser distinta a la anterior.":/at least \d+ char/i.test(m)?"La contraseña es demasiado corta.":/Failed to fetch|NetworkError|Load failed/i.test(m)?"No hay conexión con el servidor. Revisa tu internet.":m};
+function pendGet(){try{return JSON.parse(localStorage.getItem("vl_pend")||"null")}catch(e){return null}}
+function pendSet(o){try{localStorage.setItem("vl_pend",JSON.stringify(o))}catch(e){}}
+function pendDel(){try{localStorage.removeItem("vl_pend")}catch(e){}}
+async function cargaCuenta(){
+ if(!sb){MEM={u:{},s:null};return false}
+ try{
+  const ses=(await sb.auth.getSession()).data.session;
+  if(!ses){MEM={u:{},s:null};return false}
+  const uid=ses.user.id,email=ses.user.email,r=await sb.from("perfiles").select("*").eq("id",uid).maybeSingle(),pf=r.data;
+  if(r.error||!pf){MEM={u:{},s:null};return false}
+  const u={uid,mail:email,usr:pf.usuario,rol:pf.rol,estado:pf.estado,inst:pf.institucion||"",nom:(((pf.nombre||"")+" "+(pf.apellido||"")).trim())||email,face:null};
+  const ro=await sb.from("rostros").select("plantilla").eq("user_id",uid).maybeSingle();
+  if(ro.data&&Array.isArray(ro.data.plantilla))u.face={t:ro.data.plantilla};
+  if(pf.rol==="paciente"){
+   const f=(await sb.from("fichas").select("*").eq("paciente_id",uid).maybeSingle()).data;
+   if(f){u.p=Object.assign({},f.datos,{cont:f.contactos||[]});u.ven=f.acceso_hasta?Date.parse(f.acceso_hasta):null;u.qr=f.codigo||"";u.gen=f.codigo_generado?Date.parse(f.codigo_generado):null;u.rec=f.reclamo?Date.parse(f.reclamo):null;u.man=f.manilla||{}}
+   else{u.p=null;u.qr="";u.man={}}
+  }
+  MEM={u:{[email]:u},s:email,rol:pf.rol,estado:pf.estado,uid};
+  return true;
+ }catch(e){MEM={u:{},s:null};return false}
+}
+async function cerrarSesion(){try{if(sb)await sb.auth.signOut()}catch(e){}MEM={u:{},s:null};borraSes();libre=false;pendCode=null}
+async function sha(t){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(unescape(encodeURIComponent(t)))}}
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function mapFicha(p){return{n:esc(((p.nom||"")+" "+(p.ape||"")).trim()),doc:esc(p.doc),nac:p.nac,sangre:esc(p.san),alergias:esc(p.ale||"Ninguna conocida"),enf:esc(p.enf||"Ninguna registrada"),med:esc(p.med||"Ninguno registrado"),obs:esc(p.obs||"Sin observaciones"),eps:esc(p.eps||""),cir:esc(p.cirn==="Ninguna"?"Ninguna":["Cirugía","Hospitalización","Ambas"].includes(p.cirn)?({Cirugía:"Cirugía",Hospitalización:"Hospitalización",Ambas:"Cirugía y hospitalización"}[p.cirn]+(p.cir?": "+p.cir:"")):(p.cir||"")),dis:esc(p.disn==="No"?"Ninguno":(p.dis||"")),don:esc(p.don||""),pes:esc(p.pes||""),est:esc(p.est||""),mdc:esc(p.mdc||""),afi:esc(p.afi||""),vac:esc(p.vac||""),res:esc(p.res||""),cont:(p.cont||[]).map(c=>({n:esc(c.n),p:esc(c.p||"Familiar"),t:String(c.t).replace(/\D/g,"")}))}}
+function fichaDe(r){const d=Object.assign({},r.datos||{});d.nom=d.nom||r.nombre;d.ape=d.ape||r.apellido;d.doc=d.doc||r.documento;d.cont=r.contactos||[];return mapFicha(d)}
+function pct(p){if(!p)return 0;const c=(p.cont&&p.cont[0])||{};const r=[p.nom,p.ape,p.doc,p.nac,p.san,c.n,c.t];return Math.round(r.filter(Boolean).length/r.length*100)}
+const SN=["Sí","No"],CIRN=[["Ninguna","Ninguna"],["Cirugía","Me han hecho alguna cirugía"],["Hospitalización","He estado hospitalizado(a)"],["Ambas","Ambas: cirugía y hospitalización"]];
+const selSN=(id,l,o,cur)=>F(id,l,`<select id="${id}"><option value="">Selecciona…</option>${o.map(x=>{const a=Array.isArray(x)?x:[x,x];return`<option value="${a[0]}" ${cur===a[0]?"selected":""}>${a[1]}</option>`}).join("")}</select>`);
+const dep=(sel,show,inner,on)=>`<div class="dep" data-dep="${sel}" data-show="${show}"${on?"":' style="display:none"'}>${inner}</div>`;
+document.addEventListener("change",e=>{const id=e.target&&e.target.id;if(!id)return;document.querySelectorAll('[data-dep="'+id+'"]').forEach(d=>{const on=d.dataset.show.split("|").includes(e.target.value);d.style.display=on?"":"none";if(!on)d.querySelectorAll("input,textarea").forEach(x=>{x.value="";x.classList.remove("falta")})})});
+const F=(id,l,h)=>`<label class="fld" for="${id}"><span>${l}</span>${h}</label>`;
+function renderPac(){stopF();
+ const d=load(),pac=$("#pac");let u=sesion();
+ if(!u||u.rol!=="paciente"){if(document.querySelector("#v-paciente.on"))show("gate");return}
+ const p=u.p||{},c=p.cont||[],v=k=>esc(p[k]||""),pr=pct(u.p),S=["O+","O-","A+","A-","B+","B-","AB+","AB-"],al=p.alen||"",en=p.enfn||"",di=p.disn||"",ci=p.cirn||"";
+ const nm=(((p.nom||"")+" "+(p.ape||"")).trim()||u.nom||"").toLowerCase().replace(/(^|\s)\S/g,x=>x.toUpperCase()),dd=u.ven?dias(u.ven):30;
+ pac.innerHTML=`<div class="card"><div class="row" style="margin:0;justify-content:space-between;align-items:center"><div style="font-size:clamp(24px,5vw,32px);font-weight:800;letter-spacing:-.5px;line-height:1.15">👋 Hola, ${esc(nm||"bienvenido")}</div><button class="btn alt" id="sal">Cerrar sesión</button></div>
+ <div style="font-size:clamp(17px,3.6vw,21px);margin-top:12px;line-height:1.4">Tienes acceso vigente hasta el <b>${fecha(u.ven||Date.now()+30*864e5)}</b>.</div><div style="font-size:clamp(17px,3.6vw,21px);margin-top:4px;line-height:1.4">${dd>0?"Te "+(dd===1?"queda <b>1 día</b>":"quedan <b>"+dd+" días</b>")+".":"<b>Tu acceso vence hoy.</b>"}</div><div class="msg" style="font-size:15px;margin-top:12px">Tu ficha está completa al ${pr} %</div><div class="bar"><i style="width:${pr}%"></i></div></div>
+  <div class="card" id="sec-per"><div class="sechead"><h3>1. Datos personales</h3><button class="chip" type="button" data-ed="per">✏️ Editar</button></div>
+ <div class="row">${F("nom","Nombres",`<input id="nom" value="${v("nom")}">`)}${F("ape","Apellidos",`<input id="ape" value="${v("ape")}">`)}</div>
+ <div class="row">${F("doc","Documento de identidad",`<input id="doc" value="${v("doc")}">`)}${F("nac","Fecha de nacimiento",`<input id="nac" type="date" value="${v("nac")}">`)}${F("tel","Teléfono",`<input id="tel" inputmode="tel" value="${v("tel")}">`)}</div>
+ <div class="row">${F("dir","Dirección de residencia",`<input id="dir" placeholder="Ej. Calle 10 # 5-20, barrio Centro" value="${v("dir")}">`)}${F("ciu","Ciudad",`<input id="ciu" list="ciudades" placeholder="Toca para elegir o escribe tu ciudad" autocomplete="off" value="${v("ciu")}"><datalist id="ciudades">${CIU.map(x=>{const q=x.split("|");return`<option value="${q[0]}" label="${q[1]}">${q[1]}</option>`}).join("")}</datalist>`)}</div>
+ <div class="row"><button class="btn alt" type="button" data-add="per">➕ Agregar información</button></div></div>
+ <div class="card" id="sec-med"><div class="sechead"><h3>2. Información médica</h3><button class="chip" type="button" data-ed="med">✏️ Editar</button></div>
+ <div class="row">${F("san","Tipo de sangre",`<select id="san"><option value="">Selecciona…</option>${S.map(s=>`<option ${p.san===s?"selected":""}>${s}</option>`).join("")}</select>`)}${F("eps","EPS o seguro médico",`<input id="eps" placeholder="Ej. Sura, Sanitas, Nueva EPS" value="${v("eps")}">`)}${F("afi","N.º de afiliación a la EPS",`<input id="afi" placeholder="Número de tu carnet o afiliación" value="${v("afi")}">`)}</div>
+ <div class="row">${F("pes","Peso (kg)",`<input id="pes" type="number" inputmode="decimal" min="1" max="400" step="any" placeholder="Ej. 62" value="${v("pes")}">`)}${F("est","Estatura (cm)",`<input id="est" type="number" inputmode="numeric" min="30" max="250" placeholder="Ej. 165" value="${v("est")}">`)}${F("mdc","Médico tratante (nombre y teléfono)",`<input id="mdc" placeholder="Ej. Dra. Ana Pérez · 3001234567" value="${v("mdc")}">`)}</div>
+ <div class="row">${selSN("alen","¿Tiene alergias?",SN,al)}${dep("alen","Sí",F("ale","¿A qué es alérgico(a)?",`<textarea id="ale" placeholder="Ej. Penicilina, mariscos, látex">${v("ale")}</textarea>`),al==="Sí"||(!al&&p.ale))}</div>
+ <div class="row">${selSN("enfn","¿Padece alguna enfermedad?",SN,en)}${dep("enfn","Sí",F("enf","¿Qué enfermedad padece?",`<textarea id="enf" placeholder="Ej. Asma, diabetes, hipertensión">${v("enf")}</textarea>`),en==="Sí"||(!en&&p.enf))}</div>
+ <div class="row">${selSN("disn","¿Usa algún dispositivo médico?",SN,di)}${dep("disn","Sí",F("dis","¿Cuál dispositivo?",`<input id="dis" placeholder="Ej. Marcapasos, prótesis, bomba de insulina" value="${v("dis")}">`),di==="Sí"||(!di&&p.dis))}</div>
+ <div class="row">${selSN("cirn","¿Cirugías u hospitalizaciones?",CIRN,ci)}${dep("cirn","Cirugía|Hospitalización|Ambas",F("cir","¿Cuál? ¿Cuándo?",`<textarea id="cir" placeholder="Ej. Apendicectomía en 2019">${v("cir")}</textarea>`),["Cirugía","Hospitalización","Ambas"].includes(ci)||(!ci&&p.cir))}</div>
+ <div class="row">${F("med","¿Qué medicamentos toma?",`<textarea id="med" placeholder="Ej. Insulina, salbutamol">${v("med")}</textarea>`)}${F("don","¿Es donante de órganos?",`<select id="don"><option value="">Selecciona…</option>${["Sí","No","No sé"].map(s=>`<option ${p.don===s?"selected":""}>${s}</option>`).join("")}</select>`)}</div>
+ <div class="row">${F("vac","Vacunas (tétanos, COVID-19, etc.)",`<textarea id="vac" placeholder="Ej. Tétanos al día, COVID-19 con refuerzo">${v("vac")}</textarea>`)}${F("res","Restricciones médicas o creencias",`<textarea id="res" placeholder="Ej. No acepta transfusiones de sangre">${v("res")}</textarea>`)}</div>
+ <div class="row">${F("obs","Observaciones importantes",`<textarea id="obs" placeholder="Ej. Usa inhalador en crisis">${v("obs")}</textarea>`)}</div>
+ <div class="row"><button class="btn alt" type="button" data-add="med">➕ Agregar información</button></div></div>
+ <div class="card" id="sec-con"><div class="sechead"><h3>3. Contactos de emergencia</h3><button class="chip" type="button" data-ed="con">✏️ Editar</button></div>${Array.from({length:Math.max(c.length,1)},(_,i)=>filaCont(i,c[i]||{})).join("")}
+ <div class="row" id="cbtn"><button class="btn alt" type="button" data-add="con">➕ Agregar información</button><button class="btn" id="gp" type="button">💾 Guardar mi ficha</button></div><div class="msg err" id="pm"></div></div>
+ ${u.qr?seccionQR(u,p)+`<div class="card"><h3 style="margin:0 0 4px">5. Quién consultó mi ficha</h3><div class="msg" style="margin:0 0 10px">Cada vez que un paramédico abre tu ficha queda registrado aquí.</div><div id="cons" class="msg">⏳ Cargando…</div></div>`:`<div class="card"><h3 style="margin:0 0 6px">4. Genera tu código QR</h3><div class="msg" style="margin:0 0 12px">Tu código es único y solo tuyo. Al generarlo verás tu información, tu código QR y el día y la hora para reclamar tu pulsera.</div><div class="row"><button class="btn" id="gq" type="button">🔑 Generar mi código QR</button></div></div>`}`;
+ $("#sal").onclick=()=>{d.s=null;save(d);show("gate")};
+ $("#gp").onclick=()=>guardar(d,u);
+ ["per","med","con"].forEach(k=>setEd(k,false));
+ pac.querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>{if($("#sec-"+b.dataset.ed).classList.contains("ed"))guardar(d,u);else setEd(b.dataset.ed,true)});
+ pac.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>agrega(b.dataset.add));
+ pac.oninput=e=>{if(e.target.classList)e.target.classList.remove("falta")};
+ if(u.qr){
+  if(typeof QRCode==="function")new QRCode($("#qrbox"),{text:urlFicha(u.qr),width:200,height:200,correctLevel:QRCode.CorrectLevel.M});
+  $("#dq").onclick=bajar;$("#rgq").onclick=()=>regeneraQR(d,u);cargaConsultas();
+ }else $("#gq").onclick=()=>generaQR(d,u);
+}
+const RECLAMO={lugar:"el Punto de entrega VitaLink QR",dias:3,ini:8,fin:17,paso:15};
+const fechaLarga=t=>new Date(t).toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long",year:"numeric"}),horaTxt=t=>new Date(t).toLocaleTimeString("es-CO",{hour:"numeric",minute:"2-digit",hour12:true}),fechaHoraTxt=t=>t?fechaLarga(t)+", "+horaTxt(t):"—";
+async function cargaConsultas(){
+ const b=$("#cons");if(!b)return;
+ let r;try{r=await sb.rpc("mis_consultas")}catch(e){r={error:e}}
+ if(r.error){b.className="msg err";b.textContent="No se pudo cargar el historial: "+errTxt(r.error);return}
+ const a=r.data||[];
+ if(!a.length){b.className="msg";b.textContent="Nadie ha consultado tu ficha todavía.";return}
+ const em=a.filter(x=>x.emergencia);
+ b.className="";b.innerHTML=(em.length?`<div class="msg err" style="margin:0 0 10px"><b>🚨 Se registró ${em.length===1?"una emergencia":em.length+" emergencias"}.</b> La más reciente: ${esc(new Date(em[0].fecha).toLocaleString("es-CO"))}. Un paramédico escaneó tu código QR y atendió una emergencia.</div>`:"")+`<div style="overflow-x:auto"><table class="tb"><tr><th>Fecha</th><th>Paramédico</th><th>Institución</th><th>Qué pasó</th></tr>${a.map(x=>`<tr${x.emergencia?' style="background:var(--warn)"':""}><td>${esc(new Date(x.fecha).toLocaleString("es-CO"))}</td><td>${esc(x.paramedico||"—")}</td><td>${esc(x.institucion||"—")}</td><td>${x.emergencia?"<b>🚨 Emergencia registrada</b>":x.metodo==="rostro"?"🙂 Consulta por rostro":"📷 Consulta por código QR"}</td></tr>`).join("")}</table></div>`}
+async function regeneraQR(d,u){
+ if(!confirm("¿Perdiste tu manilla?\n\nEl código QR actual dejará de funcionar y se generará uno nuevo, con un nuevo día y hora para reclamar tu manilla.\n\n¿Quieres continuar?"))return;
+ const b=$("#rgq");if(b)b.disabled=true;
+ let r;try{r=await sb.rpc("regenerar_codigo")}catch(e){r={error:e}}
+ if(r.error){toast(errTxt(r.error));if(b)b.disabled=false;return}
+ await cargaCuenta();renderPac();toast("✅ Tu código anterior quedó desactivado y se generó uno nuevo.");
+ setTimeout(()=>{const q=$("#qrbox");if(q)q.scrollIntoView({block:"center"})},60)}
+async function generaQR(d,u){
+ if(pct(u.p)<100){toast("Completa tus datos y un contacto de emergencia antes de generar tu código.");return}
+ const b=$("#gq");if(b)b.disabled=true;
+ let r;try{r=await sb.rpc("generar_codigo")}catch(e){r={error:e}}
+ if(r.error){toast(errTxt(r.error));if(b)b.disabled=false;return}
+ await cargaCuenta();renderPac();toast("✅ ¡Tu código ya está generado!");
+ setTimeout(()=>{const q=$("#qrbox");if(q)q.scrollIntoView({block:"center"})},60)}
+function seccionQR(u,p){const m=u.man||{},pul=m.c?(m.n?m.c+" (para niños"+(m.d?" · dibujos de "+m.d.toLowerCase():"")+")":m.c)+" · talla "+m.t:"—",
+ r=(a,b)=>`<div><span>${a}</span><b>${esc(b||"—")}</b></div>`;
+ return`<div class="card rec"><div class="rh"><b>✅ ¡Tu código ya está generado!</b><span class="ok2">MANILLA EXITOSA</span></div>
+ <p style="margin:8px 0 0;font-size:clamp(17px,3.6vw,20px);line-height:1.4">🎉 Tu manilla ha sido exitosa. <b>Reclámala el ${fechaLarga(u.rec)} a las ${horaTxt(u.rec)}</b> en ${esc(RECLAMO.lugar)}.</p>
+ <div class="msg" style="margin:4px 0 0">Lleva tu documento de identidad${p.doc?" (CC "+esc(p.doc)+")":""}.</div>
+ <div class="qrc" style="margin:14px 0"><div id="qrbox"></div><div><h3 style="margin:0">4. Tu código QR</h3><div class="mono">${esc(u.qr)}</div><div class="row"><button class="btn" id="dq" type="button">⬇️ Descargar código QR</button></div></div></div>
+ <div class="rt">${r("Titular",((p.nom||"")+" "+(p.ape||"")).trim()||u.nom)}${r("Documento",p.doc)}${r("Usuario",u.usr)}${r("Código",u.qr)}${r("Pulsera",pul)}${r("Código generado",fechaHoraTxt(u.gen))}${r("Reclamo de la pulsera",fechaHoraTxt(u.rec))}${r("Lugar de entrega",RECLAMO.lugar.replace(/^el /,""))}</div>
+ <div class="row" style="margin-top:12px"><button class="btn alt" id="rgq" type="button">⚠️ Perdí mi manilla: desactivar este código y generar uno nuevo</button></div>
+ <div class="msg" style="margin-top:10px">📱 Al escanear este QR con la cámara del celular, el paramédico verificado llega directo a la ficha del paciente en PDF.</div>${/^https?:$/.test(location.protocol)?"":`<div class="msg err" style="margin-top:6px">⚠️ Estás viendo la página como archivo local: este QR solo abre en este mismo dispositivo. Publica la página con https (por ejemplo en Netlify) para que abra desde cualquier celular.</div>`}<div class="msg" style="margin-top:10px">📍 ¿Dónde lo encuentro después? Siempre aquí: <b>Portal del paciente → 4. Tu código QR</b>.</div></div>`}
+const fecha=t=>new Date(t).toLocaleDateString("es-CO",{day:"numeric",month:"long",year:"numeric"}),dias=t=>Math.max(0,Math.ceil((t-Date.now())/864e5));
+function mail(to,sub,html){
+ let o=$("#mail");if(!o){o=document.createElement("div");o.id="mail";document.body.appendChild(o)}
+ o.innerHTML=`<div class="mc"><div class="mh">📧 Correo simulado</div><div class="mm"><b>De:</b> VitaLink QR &lt;no-responder@vitalinkqr.com&gt;<br><b>Para:</b> ${esc(to)}<br><b>Asunto:</b> ${esc(sub)}</div><div class="mb">${html}</div><button class="btn" id="mx">Cerrar</button></div>`;
+ o.className="on";$("#mx").onclick=()=>{o.className=""};
+}
+function nuevoW(){return{p:1,tipo:"adulto",color:"Azul",dis:"",talla:"M",f:{},c:[{},{},{}],ok:false}}
+let W=nuevoW();
+const COLORES={Azul:"#2563EB",Celeste:"#38BDF8","Azul marino":"#1E3A8A",Turquesa:"#14B8A6",Verde:"#16A34A","Verde limón":"#84CC16",Amarillo:"#FACC15",Dorado:"#CA8A04",Naranja:"#EA580C",Rojo:"#DC2626",Vinotinto:"#7F1D1D",Rosado:"#F472B6",Fucsia:"#D946EF",Morado:"#7C3AED",Lila:"#C4B5FD",Café:"#92400E",Gris:"#6B7280",Plateado:"#CBD5E1",Negro:"#1F2937",Blanco:"#FFFFFF"},TALLAS={S:"Pequeña (S)",M:"Mediana (M)",L:"Grande (L)",XL:"Extra grande (XL)"},TALLAS_N={XS:"Extra pequeña (XS) · 2 a 4 años",S:"Pequeña (S) · 5 a 7 años",M:"Mediana (M) · 8 a 10 años",L:"Grande (L) · 11 a 13 años"},DISENOS={Princesa:"👑",Carrito:"🚗",Muñequito:"🧸",Unicornio:"🦄",Dinosaurio:"🦖",Cohete:"🚀",Mariposa:"🦋",Bombero:"🚒"};
+const esN=w=>w.tipo==="nino",tallasW=w=>esN(w)?TALLAS_N:TALLAS,bgW=w=>COLORES[w.color],etqPul=w=>w.color+(esN(w)?" (para niños"+(w.dis?" · dibujos de "+w.dis.toLowerCase():"")+")":""),lumi=h=>{const n=parseInt(h.slice(1),16);return .299*(n>>16)+.587*((n>>8)&255)+.114*(n&255)};
+const KEYS=["nom","ape","doc","nac","tel","san","eps","ale","enf","med","cir","dis","don","obs","dir","ciu","mail","pw","pw2","alen","enfn","disn","cirn"];
+function renderGate(){stopF();const pc=!!pendCode,g=$("#v-gate"),h=g.querySelector(".hero"),dv=g.querySelector(".div");if(h)h.style.display=pc?"none":"";if(dv)dv.style.display=pc?"none":"";$("#acc").innerHTML=accesoHTML();wireAcceso()}
+function stepper(){return`<div class="stp">${["Inicio","Pulsera","Registro","Resumen","Pago"].map((n,i)=>`<div class="sp ${i+1<W.p?"done":i+1===W.p?"cur":""}"><i>${i+1<W.p?"✓":i+1}</i><span>${n}</span></div>${i<4?`<b class="ln ${i+1<W.p?"done":""}"></b>`:""}`).join("")}</div>`}
+function qrMock(){if(qrMock.d)return qrMock.d;const N=25;let sd=11;const rnd=()=>(sd=(sd*1103515245+12345)&0x7fffffff)/0x7fffffff,g=[];
+ for(let y=0;y<N;y++){g[y]=[];for(let x=0;x<N;x++)g[y][x]=rnd()>.52}
+ const zona=(x,y)=>(x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9);
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(zona(x,y))g[y][x]=false;
+ for(let i=8;i<N-8;i++){g[6][i]=i%2===0;g[i][6]=i%2===0}
+ [[0,0],[N-7,0],[0,N-7]].forEach(o=>{for(let dy=0;dy<7;dy++)for(let dx=0;dx<7;dx++)g[o[1]+dy][o[0]+dx]=dx===0||dx===6||dy===0||dy===6||(dx>=2&&dx<=4&&dy>=2&&dy<=4)});
+ for(let dy=0;dy<5;dy++)for(let dx=0;dx<5;dx++)g[16+dy][16+dx]=dx===0||dx===4||dy===0||dy===4||(dx===2&&dy===2);
+ let d="";for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(g[y][x])d+="M"+x+" "+y+"h1v1h-1z";return qrMock.d=d}
+function pulsera(c,em){const claro=lumi(c)>170,tx=claro?"rgba(0,0,0,.3)":"rgba(255,255,255,.6)";
+ let dec="";
+ if(em){let sd=5;const rnd=()=>(sd=(sd*1103515245+12345)&0x7fffffff)/0x7fffffff;
+  [58,76,95,113,216,233,250,267,284,297].forEach((x,i)=>{const y=(i%2?78:58)+rnd()*9,sz=9+Math.round(rnd()*4),r=Math.round(rnd()*50-25),xx=x+Math.round(rnd()*4-2);
+   dec+=`<text x="${xx}" y="${y.toFixed(1)}" font-size="${sz}" text-anchor="middle" transform="rotate(${r} ${xx} ${y.toFixed(1)})">${em}</text>`});
+ }else{
+  dec=[214,232,250,268].map(x=>`<circle cx="${x}" cy="68" r="3.3" fill="rgba(0,0,0,.38)"/><circle cx="${x}" cy="68.9" r="3.3" fill="none" stroke="rgba(255,255,255,.5)" stroke-width=".8"/>`).join("")+`<text x="92" y="71" font-size="7.5" font-weight="800" letter-spacing="2" text-anchor="middle" fill="${tx}">VITALINK</text>`}
+ return`<svg viewBox="0 0 320 140" style="width:100%;max-width:360px;display:block;margin:6px auto" aria-hidden="true"><defs>
+ <linearGradient id="plg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".38" stop-color="#fff" stop-opacity=".08"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>
+ <linearGradient id="plm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8FAFC"/><stop offset=".5" stop-color="#94A3B8"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+ <linearGradient id="plt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E5EAF0"/></linearGradient>
+ <filter id="pls" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="2.6" flood-color="#0f172a" flood-opacity=".38"/></filter></defs>
+ <ellipse cx="160" cy="122" rx="132" ry="7" fill="rgba(15,23,42,.14)"/>
+ <rect x="12" y="38" width="296" height="60" rx="30" fill="${c}"/>
+ <rect x="12" y="38" width="296" height="60" rx="30" fill="url(#plg)"/>
+ <rect x="12" y="38" width="296" height="60" rx="30" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+ <path d="M34 45H286" stroke="rgba(255,255,255,.4)" stroke-width="1.2" stroke-linecap="round"/><path d="M34 92H286" stroke="rgba(0,0,0,.16)" stroke-width="1.2" stroke-linecap="round"/>
+ ${dec}
+ <rect x="30" y="38" width="14" height="60" rx="5" fill="url(#plm)" stroke="rgba(15,23,42,.35)" stroke-width="1"/><rect x="34.5" y="48" width="5" height="40" rx="2.5" fill="rgba(15,23,42,.45)"/>
+ <g filter="url(#pls)"><rect x="128" y="31" width="64" height="74" rx="9" fill="url(#plt)" stroke="#CBD5E1" stroke-width="1.2"/></g>
+ <rect x="131.5" y="34.5" width="57" height="67" rx="6.5" fill="none" stroke="rgba(15,23,42,.1)" stroke-width="1"/>
+ <g transform="translate(140 40) scale(1.6)"><path d="${qrMock()}" fill="#0F2233"/></g>
+ <text x="160" y="96" font-size="6" font-weight="800" letter-spacing="1.6" text-anchor="middle" fill="#0E7C86">VITALINK</text>
+ <circle cx="134.5" cy="38" r="1.6" fill="#94A3B8"/><circle cx="185.5" cy="38" r="1.6" fill="#94A3B8"/><circle cx="134.5" cy="98" r="1.6" fill="#94A3B8"/><circle cx="185.5" cy="98" r="1.6" fill="#94A3B8"/>
+ </svg>`}
+const wv=k=>esc(W.f[k]||"");
+const WI=(k,l,ph,t)=>F("w_"+k,l,`<input id="w_${k}" type="${t||"text"}" placeholder="${ph||""}" value="${wv(k)}">`);
+const WT=(k,l,ph)=>F("w_"+k,l,`<textarea id="w_${k}" placeholder="${ph||""}">${wv(k)}</textarea>`);
+const CIU="Leticia|Amazonas;Medellín|Antioquia;Bello|Antioquia;Itagüí|Antioquia;Envigado|Antioquia;Sabaneta|Antioquia;La Estrella|Antioquia;Caldas|Antioquia;Copacabana|Antioquia;Girardota|Antioquia;Barbosa|Antioquia;Rionegro|Antioquia;Marinilla|Antioquia;La Ceja|Antioquia;El Retiro|Antioquia;Guarne|Antioquia;Apartadó|Antioquia;Turbo|Antioquia;Carepa|Antioquia;Chigorodó|Antioquia;Necoclí|Antioquia;Caucasia|Antioquia;Puerto Berrío|Antioquia;Santa Fe de Antioquia|Antioquia;Andes|Antioquia;Jardín|Antioquia;Jericó|Antioquia;Santa Rosa de Osos|Antioquia;Yarumal|Antioquia;Segovia|Antioquia;Remedios|Antioquia;Amagá|Antioquia;Sonsón|Antioquia;Támesis|Antioquia;Urrao|Antioquia;Arauca|Arauca;Arauquita|Arauca;Saravena|Arauca;Tame|Arauca;Fortul|Arauca;Barranquilla|Atlántico;Soledad|Atlántico;Malambo|Atlántico;Sabanalarga|Atlántico;Baranoa|Atlántico;Puerto Colombia|Atlántico;Galapa|Atlántico;Santo Tomás|Atlántico;Palmar de Varela|Atlántico;Sabanagrande|Atlántico;Luruaco|Atlántico;Repelón|Atlántico;Juan de Acosta|Atlántico;Tubará|Atlántico;Bogotá|Bogotá D.C.;Cartagena|Bolívar;Magangué|Bolívar;Turbaco|Bolívar;Arjona|Bolívar;El Carmen de Bolívar|Bolívar;Mompós|Bolívar;San Juan Nepomuceno|Bolívar;María la Baja|Bolívar;Calamar|Bolívar;Santa Rosa|Bolívar;Clemencia|Bolívar;Simití|Bolívar;San Jacinto|Bolívar;Mahates|Bolívar;Tunja|Boyacá;Duitama|Boyacá;Sogamoso|Boyacá;Chiquinquirá|Boyacá;Paipa|Boyacá;Villa de Leyva|Boyacá;Moniquirá|Boyacá;Samacá|Boyacá;Puerto Boyacá|Boyacá;Garagoa|Boyacá;Manizales|Caldas;La Dorada|Caldas;Chinchiná|Caldas;Villamaría|Caldas;Riosucio|Caldas;Anserma|Caldas;Aguadas|Caldas;Salamina|Caldas;Supía|Caldas;Florencia|Caquetá;San Vicente del Caguán|Caquetá;Belén de los Andaquíes|Caquetá;Cartagena del Chairá|Caquetá;Yopal|Casanare;Aguazul|Casanare;Villanueva|Casanare;Tauramena|Casanare;Paz de Ariporo|Casanare;Monterrey|Casanare;Popayán|Cauca;Santander de Quilichao|Cauca;Puerto Tejada|Cauca;Patía|Cauca;Piendamó|Cauca;Silvia|Cauca;Miranda|Cauca;Corinto|Cauca;Valledupar|Cesar;Aguachica|Cesar;Bosconia|Cesar;Agustín Codazzi|Cesar;La Jagua de Ibirico|Cesar;Chimichagua|Cesar;Curumaní|Cesar;Pailitas|Cesar;San Alberto|Cesar;Pelaya|Cesar;El Copey|Cesar;La Paz|Cesar;Quibdó|Chocó;Istmina|Chocó;Tadó|Chocó;Acandí|Chocó;Bahía Solano|Chocó;Nuquí|Chocó;Condoto|Chocó;Montería|Córdoba;Cereté|Córdoba;Lorica|Córdoba;Sahagún|Córdoba;Montelíbano|Córdoba;Planeta Rica|Córdoba;Tierralta|Córdoba;Ayapel|Córdoba;Puerto Escondido|Córdoba;San Pelayo|Córdoba;Ciénaga de Oro|Córdoba;Chinú|Córdoba;Puerto Libertador|Córdoba;San Andrés de Sotavento|Córdoba;Soacha|Cundinamarca;Fusagasugá|Cundinamarca;Chía|Cundinamarca;Zipaquirá|Cundinamarca;Facatativá|Cundinamarca;Girardot|Cundinamarca;Mosquera|Cundinamarca;Madrid|Cundinamarca;Funza|Cundinamarca;Cajicá|Cundinamarca;Sopó|Cundinamarca;Tocancipá|Cundinamarca;La Calera|Cundinamarca;Cota|Cundinamarca;Villeta|Cundinamarca;Ubaté|Cundinamarca;Tenjo|Cundinamarca;Silvania|Cundinamarca;Anapoima|Cundinamarca;Ricaurte|Cundinamarca;Tabio|Cundinamarca;Gachancipá|Cundinamarca;Sibaté|Cundinamarca;Guaduas|Cundinamarca;Pacho|Cundinamarca;Inírida|Guainía;San José del Guaviare|Guaviare;Neiva|Huila;Pitalito|Huila;Garzón|Huila;La Plata|Huila;Campoalegre|Huila;Rivera|Huila;Gigante|Huila;San Agustín|Huila;Riohacha|La Guajira;Maicao|La Guajira;Uribia|La Guajira;Fonseca|La Guajira;San Juan del Cesar|La Guajira;Albania|La Guajira;Barrancas|La Guajira;Dibulla|La Guajira;Manaure|La Guajira;Hatonuevo|La Guajira;Santa Marta|Magdalena;Algarrobo|Magdalena;Aracataca|Magdalena;Ariguaní|Magdalena;Cerro de San Antonio|Magdalena;Chivolo|Magdalena;Ciénaga|Magdalena;Concordia|Magdalena;El Banco|Magdalena;El Piñón|Magdalena;El Retén|Magdalena;Fundación|Magdalena;Guamal|Magdalena;Nueva Granada|Magdalena;Pedraza|Magdalena;Pijiño del Carmen|Magdalena;Pivijay|Magdalena;Plato|Magdalena;Puebloviejo|Magdalena;Remolino|Magdalena;Sabanas de San Ángel|Magdalena;Salamina|Magdalena;San Sebastián de Buenavista|Magdalena;San Zenón|Magdalena;Santa Ana|Magdalena;Santa Bárbara de Pinto|Magdalena;Sitionuevo|Magdalena;Tenerife|Magdalena;Zapayán|Magdalena;Zona Bananera|Magdalena;Villavicencio|Meta;Acacías|Meta;Granada|Meta;Puerto López|Meta;Puerto Gaitán|Meta;San Martín|Meta;Restrepo|Meta;Cumaral|Meta;La Macarena|Meta;Pasto|Nariño;Tumaco|Nariño;Ipiales|Nariño;Túquerres|Nariño;La Unión|Nariño;Samaniego|Nariño;Barbacoas|Nariño;Cúcuta|Norte de Santander;Ocaña|Norte de Santander;Pamplona|Norte de Santander;Villa del Rosario|Norte de Santander;Los Patios|Norte de Santander;Tibú|Norte de Santander;Ábrego|Norte de Santander;El Zulia|Norte de Santander;Chinácota|Norte de Santander;Mocoa|Putumayo;Puerto Asís|Putumayo;Orito|Putumayo;Valle del Guamuez|Putumayo;Sibundoy|Putumayo;Puerto Leguízamo|Putumayo;Armenia|Quindío;Calarcá|Quindío;Montenegro|Quindío;La Tebaida|Quindío;Quimbaya|Quindío;Circasia|Quindío;Salento|Quindío;Filandia|Quindío;Pereira|Risaralda;Dosquebradas|Risaralda;Santa Rosa de Cabal|Risaralda;La Virginia|Risaralda;Marsella|Risaralda;Belén de Umbría|Risaralda;San Andrés|San Andrés y Providencia;Providencia|San Andrés y Providencia;Bucaramanga|Santander;Floridablanca|Santander;Girón|Santander;Piedecuesta|Santander;Barrancabermeja|Santander;San Gil|Santander;Socorro|Santander;Málaga|Santander;Vélez|Santander;Lebrija|Santander;Puerto Wilches|Santander;Sabana de Torres|Santander;Sincelejo|Sucre;Corozal|Sucre;Sampués|Sucre;San Marcos|Sucre;Tolú|Sucre;Coveñas|Sucre;San Onofre|Sucre;Majagual|Sucre;Sincé|Sucre;Ibagué|Tolima;Espinal|Tolima;Melgar|Tolima;Honda|Tolima;Chaparral|Tolima;Líbano|Tolima;Mariquita|Tolima;Flandes|Tolima;Fresno|Tolima;Lérida|Tolima;Cajamarca|Tolima;Purificación|Tolima;Guamo|Tolima;Cali|Valle del Cauca;Buenaventura|Valle del Cauca;Palmira|Valle del Cauca;Tuluá|Valle del Cauca;Cartago|Valle del Cauca;Buga|Valle del Cauca;Jamundí|Valle del Cauca;Yumbo|Valle del Cauca;Candelaria|Valle del Cauca;Florida|Valle del Cauca;Pradera|Valle del Cauca;Sevilla|Valle del Cauca;Zarzal|Valle del Cauca;Roldanillo|Valle del Cauca;Dagua|Valle del Cauca;El Cerrito|Valle del Cauca;Ginebra|Valle del Cauca;Mitú|Vaupés;Puerto Carreño|Vichada".split(";").sort((a,b)=>a.localeCompare(b,"es"));
+const WC=(k,l)=>F("w_"+k,l,`<input id="w_${k}" list="ciudades" placeholder="Toca para elegir o escribe tu ciudad" autocomplete="off" value="${wv(k)}"><datalist id="ciudades">${CIU.map(x=>{const q=x.split("|");return`<option value="${q[0]}" label="${q[1]}">${q[1]}</option>`}).join("")}</datalist>`);
+const WS=(k,l,o)=>F("w_"+k,l,`<select id="w_${k}"><option value="">Seleccionar…</option>${o.map(x=>`<option ${W.f[k]===x?"selected":""}>${x}</option>`).join("")}</select>`);
+const nav=(a,b,bl)=>`<div class="row" style="margin-top:16px">${a?`<button class="btn alt" data-ir="${a}">← Volver</button>`:""}<button class="btn" ${b===6?'id="bp"':`data-ir="${b}"`}>${bl}</button></div>`;
+function pasoHTML(){
+ const f=W.f;
+ if(W.p===1)return`<h3 style="margin:0 0 6px">Tu manilla médica inteligente</h3><p class="msg" style="margin:0">Una pulsera con código QR que lleva tu ficha médica de emergencia.</p>
+ <ul class="bl"><li>Los paramédicos la leen con la cámara, sin instalar aplicaciones.</li><li>Muestra tu tipo de sangre, alergias y medicamentos al instante.</li><li>Permite avisar a tu familia con un toque.</li><li>Incluye 1 mes de acceso a tu ficha médica.</li></ul>
+ <div class="pay"><div><b>Manilla VitaLink QR</b><br><span class="msg" style="margin:0">Pago único</span></div><div class="price">$32.000</div></div>${nav(0,2,"Comenzar →")}`;
+ if(W.p===2){const N=esN(W);return`<h3 style="margin:0 0 6px">Elige tu pulsera</h3><p class="msg" style="margin:0">Selecciona para quién es, el color y la talla.${N?" Los dibujos son opcionales.":""}</p>
+ <div class="row" style="margin-top:10px"><button type="button" class="chip ${N?"":"on"}" data-tipo="adulto">👤 Adultos</button><button type="button" class="chip ${N?"on":""}" data-tipo="nino">🧒 Para niños</button></div>
+ <div class="two2"><div class="box"><small>Color · 20 opciones</small><div class="sw">${Object.entries(COLORES).map(x=>`<button type="button" class="swb ${W.color===x[0]?"on":""}" data-col="${x[0]}" style="--c:${x[1]}" title="${x[0]}" aria-label="${x[0]}"></button>`).join("")}</div><div class="msg" style="margin:8px 0 0">${W.color}</div></div>
+ <div class="box"><small>Talla</small><div class="row" style="margin-top:8px">${Object.entries(tallasW(W)).map(x=>`<button type="button" class="chip ${W.talla===x[0]?"on":""}" data-tal="${x[0]}">${x[1]}</button>`).join("")}</div></div></div>
+ ${N?`<div class="box"><small>Dibujos para niños (opcional)</small><div class="row" style="margin-top:8px"><button type="button" class="chip ${W.dis?"":"on"}" data-dis="">Sin dibujos</button>${Object.entries(DISENOS).map(x=>`<button type="button" class="chip ${W.dis===x[0]?"on":""}" data-dis="${x[0]}">${x[1]} ${x[0]}</button>`).join("")}</div><div class="msg" style="margin:8px 0 0">Los dibujitos salen pequeños y repartidos por toda la pulsera.</div></div>`:""}
+ <div class="box prev"><small>Vista previa</small>${pulsera(bgW(W),N&&W.dis?DISENOS[W.dis]:"")}<div class="msg" style="margin:0">La pulsera incluye código QR médico. El código de la imagen es de muestra: el tuyo se genera al registrarte.</div></div>${nav(1,3,"Continuar al registro →")}`}
+ if(W.p===3){const c=W.c;return`<h3 style="margin:0 0 6px">Datos del paciente</h3><p class="msg" style="margin:0">Completa los campos. Esta información se mostrará al escanear la pulsera.</p>
+ <div class="sec">👤 INFORMACIÓN PERSONAL</div><div class="row">${WI("nom","Nombres")}${WI("ape","Apellidos")}</div><div class="row">${WI("doc","Documento de identidad","Ej. 12345678")}${WI("nac","Fecha de nacimiento","","date")}${F("w_edad","Edad",`<input id="w_edad" readonly value="${f.nac?edad(f.nac):""}">`)}</div><div class="row">${WI("tel","Teléfono","Ej. 3001234567")}</div>
+ <div class="sec">🩺 INFORMACIÓN MÉDICA</div><div class="row">${WS("san","Tipo de sangre",["O+","O-","A+","A-","B+","B-","AB+","AB-"])}${WI("eps","EPS o seguro médico","Ej. Sura, Sanitas")}</div><div class="row">${selSN("w_alen","¿Tiene alergias?",SN,W.f.alen)}${dep("w_alen","Sí",WT("ale","¿A qué es alérgico(a)?","Ej. Penicilina, mariscos, látex"),W.f.alen==="Sí")}</div><div class="row">${selSN("w_enfn","¿Padece alguna enfermedad?",SN,W.f.enfn)}${dep("w_enfn","Sí",WT("enf","¿Qué enfermedad padece?","Ej. Asma, diabetes, hipertensión"),W.f.enfn==="Sí")}</div><div class="row">${selSN("w_disn","¿Usa algún dispositivo médico?",SN,W.f.disn)}${dep("w_disn","Sí",WI("dis","¿Cuál dispositivo?","Ej. Marcapasos, prótesis, bomba de insulina"),W.f.disn==="Sí")}</div><div class="row">${selSN("w_cirn","¿Cirugías u hospitalizaciones?",CIRN,W.f.cirn)}${dep("w_cirn","Cirugía|Hospitalización|Ambas",WT("cir","¿Cuál? ¿Cuándo?","Ej. Apendicectomía en 2019"),["Cirugía","Hospitalización","Ambas"].includes(W.f.cirn))}</div><div class="row">${WT("med","¿Qué medicamentos toma?","Ej. Insulina")}${WS("don","¿Es donante de órganos?",["Sí","No","No sé"])}</div><div class="row">${WT("obs","Observaciones importantes")}</div>
+ <div class="sec">📍 DIRECCIÓN</div><div class="row">${WI("dir","Dirección de residencia")}${WC("ciu","Ciudad")}</div>
+ <div class="sec">📞 CONTACTOS DE EMERGENCIA</div>${[0,1,2].map(i=>`<div class="row">${F("w_cn"+i,"Nombre del contacto "+(i+1)+(i?" (opcional)":""),`<input id="w_cn${i}" value="${esc(c[i].n)}">`)}${F("w_cp"+i,"Parentesco",`<input id="w_cp${i}" value="${esc(c[i].p)}">`)}${F("w_ct"+i,"Teléfono",`<input id="w_ct${i}" value="${esc(c[i].t)}">`)}</div>`).join("")}
+ <div class="sec">🔐 CUENTA Y ROSTRO</div><div class="row">${WI("mail","Correo electrónico (debe ser @gmail.com)","nombre@gmail.com","email")}</div><div class="row">${WI("pw","Contraseña (mínimo 8 caracteres)","","password")}${WI("pw2","Repite tu contraseña","","password")}</div>
+ <div class="facebox"><b>🙂 Reconocimiento facial</b><div class="msg" style="margin:4px 0 6px">Mira al círculo: el sistema reconoce tu rostro de una vez, sin subir ni tomar fotos.</div><div class="camw" style="display:none"><video id="fv" playsinline muted></video><div class="oval"></div><div class="scan"></div></div><div class="row"><button class="btn alt" id="fc" type="button">🙂 Reconocer mi rostro</button></div><div class="msg" id="fm">Aún no has registrado tu rostro.</div></div>
+ <label class="chk"><input type="checkbox" id="w_ok" ${W.ok?"checked":""}> Acepto el consentimiento informado: autorizo guardar mis datos médicos y mostrarlos al personal de emergencias cuando escaneen mi QR, y guardar mi imagen facial para reconocerme al ingresar.</label>
+ <div class="msg err" id="pm"></div>${nav(2,4,"Continuar al resumen →")}`}
+ if(W.p===4){const c=W.c.filter(x=>x.n&&x.t),r=(a,b)=>`<div class="sr"><span>${a}</span><b>${esc(b||"—")}</b></div>`;return`<h3 style="margin:0 0 6px">Resumen de tu compra</h3><p class="msg" style="margin:0">Revisa que todo esté correcto antes de pagar.</p>
+ <div class="box" style="margin-top:12px"><div class="row" style="margin:0;justify-content:space-between;align-items:center"><small>Pulsera</small><button class="chip" data-ir="2">Editar</button></div>${r("Para",esN(W)?"Niños":"Adultos")}${r("Color",W.color)}${esN(W)?r("Dibujos",W.dis||"Sin dibujos"):""}${r("Talla",tallasW(W)[W.talla])}</div>
+ <div class="box" style="margin-top:12px"><div class="row" style="margin:0;justify-content:space-between;align-items:center"><small>Paciente</small><button class="chip" data-ir="3">Editar</button></div>${r("Nombre",f.nom+" "+f.ape)}${r("Documento",f.doc)}${r("Edad",f.nac?edad(f.nac)+" años":"")}${r("Tipo de sangre",f.san)}${r("EPS",f.eps)}${r("Alergias",f.alen==="Sí"?f.ale:f.alen==="No"?"No":"")}${r("Contactos",c.map(x=>x.n+" ("+x.t+")").join(", "))}${r("Correo",f.mail)}${r("Rostro",faceTmp?"✔ Registrado":"")}</div>
+ <div class="pay"><div><b>Total a pagar</b><br><span class="msg" style="margin:0">Manilla + 1 mes de acceso</span></div><div class="price">$32.000</div></div>${nav(3,5,"Continuar al pago →")}`}
+ return`<h3 style="margin:0 0 6px">Pago de tu manilla</h3><p class="msg" style="margin:0">Elige cómo vas a pagar. Te enviaremos una solicitud de pago al número que indiques.</p>
+ <div class="row" style="margin-top:12px">${F("bm","Medio de pago",`<select id="bm"><option>Nequi</option><option>Daviplata</option><option>Bancolombia</option><option>PSE</option></select>`)}${F("bnum","Número",`<input id="bnum" inputmode="numeric" autocomplete="off">`)}</div>
+ <div class="pay"><div><b>Manilla VitaLink QR</b><br><span class="msg" style="margin:0">${etqPul(W)} · talla ${W.talla}</span></div><div class="price">$32.000</div></div>
+ <div class="msg err" id="pm"></div><div class="msg">Al pagar, enviamos la solicitud al número que indiques para que la aceptes. Demostración: no se cobra nada.</div>${nav(4,6,"💳 Pagar mi manilla")}`;
+}
+function accesoHTML(){
+ const tabs=`<div class="row" style="margin:0 0 14px"><button class="btn ${modo==="buy"?"":"alt"}" data-m="buy">Registrar y comprar mi manilla</button><button class="btn ${modo==="log"?"":"alt"}" data-m="log">Ya tengo mi usuario: ingresar</button></div>`;
+ if(modo==="buy")return`<div class="card">${tabs}${stepper()}${pasoHTML()}</div>`;
+ return`<div class="card">${pendCode?`<h2 style="margin:0 0 4px">🚑 Acceso de paramédicos</h2><div class="msg" style="margin:0 0 14px">Escribe tu correo y contraseña: al entrar se abre <b>directamente la ficha del paciente</b> que escaneaste.</div>`:tabs}<div class="row">${F("lu","Correo electrónico",`<input id="lu" type="email" autocomplete="username" placeholder="nombre@gmail.com">`)}${F("lp","Contraseña",`<input id="lp" type="password" autocomplete="current-password">`)}</div><div class="row"><button class="btn ok" id="lg" type="button">Entrar</button></div><div class="msg"><a href="#" id="olv" style="font-weight:700;text-decoration:underline">¿Olvidaste tu contraseña?</a></div><div class="msg err" id="pm"></div>${pendCode?"":`<div class="msg">Tu acceso dura 1 mes y empieza a contar desde tu compra.</div>`}</div>`;
+}
+function leeReg(){
+ KEYS.forEach(k=>{const e=$("#w_"+k);if(e)W.f[k]=e.value.trim()});W.f.mail=(W.f.mail||"").toLowerCase();
+ W.c=[0,1,2].map(i=>({n:($("#w_cn"+i)||{value:""}).value.trim(),p:($("#w_cp"+i)||{value:""}).value.trim(),t:($("#w_ct"+i)||{value:""}).value.trim()}));
+ const o=$("#w_ok");if(o)W.ok=o.checked;
+}
+function validaReg(){
+ const f=W.f,m=$("#pm"),d=load(),err=t=>{m.textContent=t;m.scrollIntoView({block:"center"});return false};
+ if(!f.nom||!f.ape||!f.doc||!f.nac||!f.san)return err("Completa nombres, apellidos, documento, fecha de nacimiento y tipo de sangre.");
+ if(!f.alen||!f.enfn||!f.disn||!f.cirn)return err("Responde las preguntas médicas: alergias, enfermedad, dispositivo médico y cirugías u hospitalizaciones.");
+ if(f.alen==="Sí"&&!f.ale)return err("Escribe a qué eres alérgico(a).");
+ if(f.enfn==="Sí"&&!f.enf)return err("Escribe qué enfermedad padeces.");
+ if(f.disn==="Sí"&&!f.dis)return err("Escribe qué dispositivo médico usas.");
+ if(["Cirugía","Hospitalización","Ambas"].includes(f.cirn)&&!f.cir)return err("Cuéntanos cuál cirugía u hospitalización has tenido.");
+ const c=W.c.filter(x=>x.n||x.t||x.p);
+ if(!c.length||c.some(x=>!x.n||!x.t))return err("Agrega al menos un contacto de emergencia, y cada contacto necesita nombre y teléfono.");
+ if(!/^[^\s@]+@gmail\.com$/.test(f.mail||""))return err("El correo debe terminar en @gmail.com.");
+ if(!f.pw||f.pw.length<8)return err("La contraseña debe tener al menos 8 caracteres.");
+ if(f.pw!==f.pw2)return err("Las contraseñas no coinciden.");
+ if(!faceTmp)return err("Registra tu rostro para continuar.");
+ if(!W.ok)return err("Debes aceptar el consentimiento informado.");
+ return true;
+}
+function irPaso(n){
+ if(W.p===3){leeReg();if(n>3&&!validaReg())return}
+ W.p=n;renderGate();window.scrollTo(0,0);
+}
+function wireAcceso(){
+ const A=$("#acc");
+ A.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{modo=b.dataset.m;renderGate()});
+ A.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>irPaso(+b.dataset.ir));
+ A.querySelectorAll("[data-col]").forEach(b=>b.onclick=()=>{W.color=b.dataset.col;renderGate()});
+ A.querySelectorAll("[data-tal]").forEach(b=>b.onclick=()=>{W.talla=b.dataset.tal;renderGate()});
+ A.querySelectorAll("[data-tipo]").forEach(b=>b.onclick=()=>{W.tipo=b.dataset.tipo;W.color=W.tipo==="nino"?"Rosado":"Azul";W.dis=W.tipo==="nino"?"Princesa":"";W.talla=W.tipo==="nino"?"S":"M";renderGate()});
+ A.querySelectorAll("[data-dis]").forEach(b=>b.onclick=()=>{W.dis=b.dataset.dis;renderGate()});
+ if($("#lg")){$("#olv").onclick=e=>{e.preventDefault();olvide()};$("#lg").onclick=ingresar;$("#lp").addEventListener("keydown",e=>{if(e.key==="Enter")ingresar()})}
+ if($("#fc")){
+  $("#fc").onclick=()=>reconoce($("#fv"),$("#fc"),$("#fm"),(f,ui)=>{faceTmp=f;ui.ok("Reconocimiento exitoso");$("#fc").textContent="🔄 Registrar de nuevo"});
+  if(faceTmp){$("#fc").textContent="🔄 Registrar de nuevo";$("#fm").textContent="✅ Rostro reconocido y registrado"}
+  $("#w_nac").oninput=()=>{$("#w_edad").value=$("#w_nac").value?edad($("#w_nac").value):""};
+ }
+ if($("#bp")){$("#bp").onclick=pagar;$("#bm").onchange=ajustaMed;ajustaMed()}
+}
+const MED={"Nequi":["Celular Nequi desde el que pagas","Ej. 3001234567",/^3\d{9}$/],"Daviplata":["Celular Daviplata desde el que pagas","Ej. 3001234567",/^3\d{9}$/],"Bancolombia":["Número de cuenta o celular Bancolombia","10 u 11 dígitos",/^\d{10,11}$/],"PSE":["Número de documento (CC)","Ej. 1001234567",/^\d{6,10}$/]};
+function ajustaMed(){const m=MED[$("#bm").value],i=$("#bnum");i.previousElementSibling.textContent=m[0];i.placeholder=m[1]}
+let pend=null;
+function pagar(){
+ const med=$("#bm").value,num=$("#bnum").value.replace(/\s/g,""),m=$("#pm");
+ if(!MED[med][2].test(num)){m.textContent="Escribe un número válido para pagar con "+med+".";return}
+ const f=W.f;pend={n:f.nom+" "+f.ape,e:f.mail,med,num,face:faceTmp,W:JSON.parse(JSON.stringify(W))};
+ $("#acc").innerHTML=`<div class="card"><h3 style="margin:0">📲 Solicitud de pago enviada</h3><p class="msg">Enviamos la solicitud a tu <b>${esc(med)}</b>, al número <b>${esc(num)}</b>. Ábrelo y acepta para pagar tu manilla.</p>
+ <div class="phone"><div class="msg" style="margin:0 0 6px"><b>${esc(med)}</b> · ahora</div><div>VitaLink QR solicita un pago de <b>$32.000</b></div><div class="row"><button class="btn ok" id="pa">Aceptar</button><button class="btn alt" id="pr">Rechazar</button></div></div>
+ <div class="msg">Simulación: en la versión real, la solicitud llega a la app o cuenta del cliente.</div></div>`;
+ $("#pa").onclick=aprobar;
+ $("#pr").onclick=()=>{pend=null;renderGate();toast("Pago rechazado. No se cobró nada.")};
+}
+async function guardaRegistro(w,fc){
+ try{
+  const f=w.f,ses=(await sb.auth.getSession()).data.session;
+  if(!ses)return{error:"Tu sesión no está activa. Ingresa de nuevo."};
+  const uid=ses.user.id,cont=w.c.filter(x=>x.n&&x.t).map(x=>({n:x.n,p:x.p,t:x.t}));
+  const p={nom:f.nom,ape:f.ape,doc:f.doc,nac:f.nac,tel:f.tel||"",san:f.san,ale:f.alen==="Sí"?f.ale||"":"",enf:f.enfn==="Sí"?f.enf||"":"",med:f.med||"",obs:f.obs||"",eps:f.eps||"",cir:["Cirugía","Hospitalización","Ambas"].includes(f.cirn)?f.cir||"":"",dis:f.disn==="Sí"?f.dis||"":"",alen:f.alen||"",enfn:f.enfn||"",disn:f.disn||"",cirn:f.cirn||"",don:f.don||"",dir:f.dir||"",ciu:f.ciu||""};
+  let r=await sb.from("perfiles").update({nombre:f.nom,apellido:f.ape,telefono:f.tel||null,documento:f.doc}).eq("id",uid);
+  if(r.error)return{error:r.error.code==="23505"?"Ese documento ya está registrado en otra cuenta.":"No se pudo guardar tu perfil: "+errTxt(r.error)};
+  const ex=await sb.from("fichas").select("paciente_id").eq("paciente_id",uid).maybeSingle(),man={c:w.color,t:w.talla,n:w.tipo==="nino"?1:0,d:w.dis||""};
+  r=ex.data?await sb.from("fichas").update({datos:p,contactos:cont,manilla:man}).eq("paciente_id",uid):await sb.from("fichas").insert({paciente_id:uid,datos:p,contactos:cont,manilla:man});
+  if(r.error)return{error:"No se pudo guardar tu ficha: "+errTxt(r.error)};
+  if(fc&&fc.t){const q=await sb.from("rostros").upsert({user_id:uid,plantilla:fc.t});if(q.error)return{error:"No se pudo guardar tu rostro: "+errTxt(q.error)}}
+  return{ok:true};
+ }catch(e){return{error:errTxt(e)}}
+}
+async function aprobar(){
+ if(!pend)return;const {n,e,med,num,face:fc,W:w}=pend,f=w.f;pend=null;
+ const volver=t=>{W.p=3;renderGate();const m=$("#pm");if(m){m.textContent=t;m.scrollIntoView({block:"center"})}toast(t)};
+ if(!sb){volver("No hay conexión con el servidor. Revisa tu internet.");return}
+ $("#acc").innerHTML='<div class="card"><div class="msg">⏳ Confirmando tu pago y creando tu cuenta segura…</div></div>';
+ let ses=null;
+ try{
+  ses=(await sb.auth.getSession()).data.session;
+  if(!ses||ses.user.email!==e){
+   const r=await sb.auth.signUp({email:e,password:f.pw});
+   if(r.error){volver(errTxt(r.error));return}
+   ses=r.data.session;
+   if(!ses){
+    pendSet({w:Object.assign({},w,{f:Object.assign({},f,{pw:"",pw2:""})}),face:fc});
+    $("#acc").innerHTML=`<div class="card"><h3 style="margin:0">📧 Confirma tu correo</h3><p class="msg">Te enviamos un mensaje a <b>${esc(e)}</b>. Ábrelo, confirma tu correo y luego entra con <b>Ingresar</b>: tu ficha se guardará automáticamente.</p><div class="row"><button class="btn" id="ir" type="button">Ir a ingresar</button></div></div>`;
+    $("#ir").onclick=()=>{modo="log";renderGate()};W=nuevoW();faceTmp=null;return}
+  }
+ }catch(x){volver(errTxt(x));return}
+ const g=await guardaRegistro(w,fc);
+ if(g.error){volver(g.error);return}
+ await cargaCuenta();const u=sesion(),us=u?u.usr:"";
+ W=nuevoW();faceTmp=null;
+ const no="VL-"+String(crypto.getRandomValues(new Uint32Array(1))[0]).slice(-8).padStart(8,"0"),fh=new Date().toLocaleString("es-CO"),nm="•••• "+num.slice(-4);
+ const filas=[["N.º de comprobante",no],["Fecha y hora",fh],["Cliente",n],["Correo",e],["Pulsera",etqPul(w)+" · talla "+w.talla],["Medio de pago",med],["Pagado desde",nm],["Concepto","Manilla VitaLink QR + 1 mes de acceso"],["Total pagado","$32.000"]];
+ $("#acc").innerHTML=`<div class="card rec"><div class="rh"><b>🧾 Comprobante de pago</b><span class="ok2">✔ APROBADO</span></div><div class="rt">${filas.map(x=>`<div><span>${x[0]}</span><b>${esc(x[1])}</b></div>`).join("")}</div></div>
+ <div class="card"><h3 style="margin:0">🔐 Tu cuenta está lista</h3><div class="box"><small>Usuario</small><div class="mono">${esc(us)}</div><small>Correo para ingresar</small><div class="mono">${esc(e)}</div></div><p class="msg">Para ingresar usa tu correo y la contraseña que elegiste. Por seguridad no se muestra ni se guarda en esta página.</p><p class="msg">📄 <b>Descarga o imprime tu comprobante en PDF</b>: ahí quedan tu usuario y el correo con el que debes ingresar, por si los olvidas.</p><p class="msg">Tu acceso dura 1 mes desde hoy. Ahora genera tu <b>código QR único</b> en tu portal: ahí verás el día y la hora para reclamar tu manilla.</p><div class="row"><button class="btn" id="dc" type="button">⬇️ Descargar comprobante (PDF)</button><button class="btn alt" id="imp" type="button">🖨️ Imprimir comprobante</button></div><div class="row"><button class="btn alt" id="ir" type="button">Ir a mi portal →</button></div></div>`;
+ $("#ir").onclick=()=>show("paciente");
+ const cp=pdfComprobante({no,fh,n,e,us,pul:etqPul(w)+" · talla "+w.talla,med,nm,total:"$32.000",sitio:/^https?:$/.test(location.protocol)?location.href.split("#")[0].split("?")[0]:""}),cb=new Blob([cp],{type:"application/pdf"});
+ $("#dc").onclick=()=>descarga("comprobante-"+no+".pdf",cb);
+ $("#imp").onclick=()=>imprimePDF(cb);
+ toast("✅ Cuenta creada. ¡Bienvenido a VitaLink QR!");
+}
+async function entrarTrasLogin(m){
+ const ok=await cargaCuenta();
+ if(!ok){m.textContent="No pudimos cargar tu cuenta. Inténtalo de nuevo.";return}
+ let u=sesion();
+ if(u.rol==="paciente"&&!u.p){const pe=pendGet();if(pe){const r=await guardaRegistro(pe.w,pe.face);if(r.ok){pendDel();await cargaCuenta();u=sesion()}}}
+ if(u.rol==="paciente"&&u.ven&&Date.now()>u.ven){await cerrarSesion();m.textContent="Tu acceso venció el "+fecha(u.ven)+". Compra una nueva manilla para volver a entrar.";return}
+ toast("Ingreso exitoso ✔");
+ if(pendCode&&u.rol==="paramedico"){const c=pendCode;pendCode=null;await entraFicha(c);return}
+ show(u.rol==="paramedico"?"paramedico":u.rol==="admin"?"admin":"inicio");
+}
+async function olvide(){
+ const m=$("#pm"),e=($("#lu").value||"").trim().toLowerCase();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){m.textContent="Escribe tu correo en el campo de arriba y vuelve a pulsar «¿Olvidaste tu contraseña?».";$("#lu").focus();return}
+ if(!sb){m.textContent="No hay conexión con el servidor. Revisa tu internet.";return}
+ if(!/^https?:$/.test(location.protocol)){m.textContent="Para recuperar tu contraseña abre la página desde su dirección en internet (https), no desde un archivo del computador.";return}
+ m.textContent="Enviando…";
+ let r;try{r=await sb.auth.resetPasswordForEmail(e,{redirectTo:location.href.split("#")[0].split("?")[0]})}catch(x){r={error:x}}
+ m.textContent=r.error?errTxt(r.error):"✅ Si ese correo tiene una cuenta, te enviamos un enlace para crear una contraseña nueva. Revisa tu bandeja de entrada y el spam.";
+}
+function cierraNC(){const o=$("#ncov");if(o)o.remove()}
+function formNuevaClave(){
+ cierraNC();
+ const o=document.createElement("div");o.id="ncov";o.style.cssText="position:fixed;inset:0;z-index:80;background:rgba(15,23,42,.78);display:grid;place-items:center;padding:16px";
+ o.innerHTML=`<div class="card" style="max-width:440px;width:100%;margin:0"><h3 style="margin:0 0 6px">🔑 Crea tu nueva contraseña</h3><p class="msg" style="margin:0 0 10px">Escribe una contraseña nueva de mínimo 8 caracteres.</p><div class="row">${F("nc1","Nueva contraseña",`<input id="nc1" type="password" autocomplete="new-password">`)}</div><div class="row">${F("nc2","Repite la contraseña",`<input id="nc2" type="password" autocomplete="new-password">`)}</div><div class="row"><button class="btn ok" id="ncg" type="button">Guardar contraseña</button></div><div class="msg err" id="ncm"></div></div>`;
+ document.body.appendChild(o);
+ $("#ncg").onclick=async()=>{const a=$("#nc1").value,b=$("#nc2").value,m=$("#ncm");
+  if(a.length<8){m.textContent="La contraseña debe tener al menos 8 caracteres.";return}
+  if(a!==b){m.textContent="Las contraseñas no coinciden.";return}
+  m.textContent="Guardando…";
+  let r;try{r=await sb.auth.updateUser({password:a})}catch(x){r={error:x}}
+  if(r.error){m.textContent=errTxt(r.error);return}
+  cierraNC();recup=false;toast("✅ Contraseña actualizada");await cargaCuenta();
+  const u=sesion();show(u?(u.rol==="paramedico"?"paramedico":u.rol==="admin"?"admin":"inicio"):"gate")};
+}
+async function ingresar(){
+ const e=$("#lu").value.trim().toLowerCase(),pw=$("#lp").value,m=$("#pm");
+ if(!e||!pw){m.textContent="Escribe tu correo y tu contraseña.";return}
+ if(!sb){m.textContent="No hay conexión con el servidor. Revisa tu internet.";return}
+ m.textContent="Entrando…";
+ let r;try{r=await sb.auth.signInWithPassword({email:e,password:pw})}catch(x){r={error:x}}
+ if(r.error){m.textContent=errTxt(r.error);return}
+ await entrarTrasLogin(m);
+}
+let fs=null,faceTmp=null;
+async function camF(v,b1){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||window.isSecureContext===false){toast("Este navegador no deja usar la cámara en esta página. Abre el archivo en Chrome o publícalo con https.");return false}
+ try{stopF();fs=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});v.srcObject=fs;v.style.display="block";v.parentElement.style.display="block";await v.play();b1.hidden=true;return true}
+ catch(e){const n=e&&e.name;toast(n==="NotAllowedError"?"La cámara está bloqueada. Toca el candado junto a la dirección, entra a Permisos, elige Cámara y pulsa Permitir. Si abriste el archivo desde otra app, ábrelo en Chrome.":n==="NotFoundError"?"No se encontró ninguna cámara en este dispositivo.":n==="NotReadableError"?"Otra app está usando la cámara. Ciérrala e inténtalo de nuevo.":"No se pudo abrir la cámara.");return false}
+}
+async function reconoce(v,btn,msg,cb){
+ if(!await camF(v,btn))return;
+ const w=v.parentElement;
+ w.querySelectorAll(".snap,.badge,.res").forEach(e=>e.remove());w.classList.remove("okf");
+ const res=(good,t)=>{w.querySelectorAll(".badge,.res").forEach(e=>e.remove());
+  const r=document.createElement("div");r.className="res"+(good?"":" bad");r.innerHTML="<b>"+(good?"✔":"✖")+"</b>";w.appendChild(r);
+  const b=document.createElement("div");b.className="badge"+(good?"":" bad");b.textContent=t;w.appendChild(b);
+  w.classList.toggle("okf",!!good);msg.textContent=(good?"✅ ":"❌ ")+t};
+ const ui={ok:t=>res(1,t),fail:t=>res(0,t)};
+ const done=()=>{const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;const x=c.getContext("2d");x.translate(c.width,0);x.scale(-1,1);x.drawImage(v,0,0);c.className="snap";w.appendChild(c);stopF();w.classList.remove("go");btn.hidden=false};
+ w.classList.add("go");msg.textContent="🔍 Reconociendo… mira al círculo";
+ let fd=null;try{if("FaceDetector" in window)fd=new FaceDetector({fastMode:true,maxDetectedFaces:1})}catch(e){}
+ const t0=Date.now();let n=0;
+ const loop=async()=>{
+  if(!fs)return;
+  const t=Date.now()-t0;
+  if(fd){try{const r=await fd.detect(v);n=r.length?n+1:0}catch(e){fd=null}}
+  if(!fd)n=t>1100?2:0;
+  if(n>=2&&t>=600){const f=face(v);done();cb(f,ui);return}
+  if(t>8000){done();ui.fail("Reconocimiento fallido. Intenta nuevamente.");return}
+  setTimeout(loop,80)
+ };loop();
+}
+function stopF(){if(fs){fs.getTracks().forEach(t=>t.stop());fs=null}}
+function face(el){
+ const w=el.videoWidth||el.naturalWidth,h=el.videoHeight||el.naturalHeight,s=Math.min(w,h),c=document.createElement("canvas");c.width=c.height=96;
+ c.getContext("2d").drawImage(el,(w-s)/2,(h-s)/2,s,s,0,0,96,96);
+ const t=document.createElement("canvas");t.width=t.height=24;const x=t.getContext("2d");x.drawImage(c,0,0,24,24);
+ const d=x.getImageData(0,0,24,24).data,g=[];for(let i=0;i<d.length;i+=4)g.push(.3*d[i]+.59*d[i+1]+.11*d[i+2]);
+ const m=g.reduce((a,b)=>a+b)/g.length,sd=Math.sqrt(g.reduce((a,b)=>a+(b-m)**2,0)/g.length)||1;
+ return{t:g.map(v=>Math.round((v-m)/sd*100)/100)};
+}
+const sim=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0)/a.length;
+async function demo(k){
+ if(k==="par"){libre=true;show("paramedico");$("#code").value="VLQR-0001-A1B2C3";consultar("VLQR-0001-A1B2C3")}
+}
+function filaCont(i,o){return`<div class="row crow">${F("cn"+i,"Nombre del contacto "+(i+1)+(i?" (opcional)":""),`<input id="cn${i}" value="${esc(o.n)}">`)}${F("cp"+i,"Parentesco",`<input id="cp${i}" value="${esc(o.p)}">`)}${F("ct"+i,"Teléfono",`<input id="ct${i}" inputmode="tel" value="${esc(o.t)}">`)}</div>`}
+function setEd(sec,on){const c=$("#sec-"+sec);if(!c)return;c.querySelectorAll("input,select,textarea").forEach(e=>e.disabled=!on);c.classList.toggle("ed",on);const b=c.querySelector("[data-ed]");if(b)b.textContent=on?"✔ Listo (guardar)":"✏️ Editar"}
+function agrega(sec){
+ const c=$("#sec-"+sec);setEd(sec,true);
+ if(sec==="con"){
+  const n=c.querySelectorAll(".crow").length;
+  if(n>=6){toast("Puedes agregar hasta 6 contactos.");return}
+  $("#cbtn").insertAdjacentHTML("beforebegin",filaCont(n,{}));
+  const e=$("#cn"+n);e.scrollIntoView({block:"center"});e.focus();toast("Escribe el nuevo contacto y pulsa «Listo (guardar)»");return}
+ const vac=[...c.querySelectorAll("input,select,textarea")].filter(e=>!e.value.trim()&&!(e.closest(".dep")&&e.closest(".dep").style.display==="none"));
+ c.querySelectorAll(".falta").forEach(e=>e.classList.remove("falta"));
+ if(!vac.length){toast("Esta sección ya está completa. Usa «Editar» para cambiar algo.");return}
+ vac.forEach(e=>e.classList.add("falta"));vac[0].scrollIntoView({block:"center"});vac[0].focus();
+ toast("Completa los campos marcados y pulsa «Listo (guardar)»");
+}
+async function guardar(d,u){
+ const g=i=>{const e=$("#"+i);return e?e.value.trim():""},m=$("#pm"),er=t=>{m.textContent=t;toast(t)};
+ const cont=[0,1,2,3,4,5].map(i=>({n:g("cn"+i),p:g("cp"+i),t:g("ct"+i)})).filter(x=>x.n||x.t||x.p);
+ const p={nom:g("nom"),ape:g("ape"),doc:g("doc"),nac:g("nac"),tel:g("tel"),san:g("san"),ale:g("alen")==="No"?"":g("ale"),enf:g("enfn")==="No"?"":g("enf"),med:g("med"),obs:g("obs"),eps:g("eps"),cir:g("cirn")==="Ninguna"?"":g("cir"),dis:g("disn")==="No"?"":g("dis"),alen:g("alen"),enfn:g("enfn"),disn:g("disn"),cirn:g("cirn"),don:g("don"),dir:g("dir"),ciu:g("ciu"),pes:g("pes"),est:g("est"),mdc:g("mdc"),afi:g("afi"),vac:g("vac"),res:g("res")};
+ if(!p.nom||!p.ape||!p.doc||!p.nac||!p.san){er("Completa nombres, apellidos, documento, fecha de nacimiento y tipo de sangre.");return}
+ if(p.alen==="Sí"&&!p.ale){er("Escribe a qué eres alérgico(a).");return}
+ if(p.enfn==="Sí"&&!p.enf){er("Escribe qué enfermedad padeces.");return}
+ if(p.disn==="Sí"&&!p.dis){er("Escribe qué dispositivo médico usas.");return}
+ if(["Cirugía","Hospitalización","Ambas"].includes(p.cirn)&&!p.cir){er("Cuéntanos cuál cirugía u hospitalización has tenido.");return}
+ if(p.pes&&!(+p.pes>0&&+p.pes<400)){er("Escribe un peso válido en kg.");return}
+ if(p.est&&!(+p.est>=30&&+p.est<=250)){er("Escribe una estatura válida en cm.");return}
+ if(!cont.length||cont.some(x=>!x.n||!x.t)){er("Agrega al menos un contacto, y cada contacto necesita nombre y teléfono.");return}
+ m.textContent="Guardando…";
+ try{
+  let r=await sb.from("perfiles").update({nombre:p.nom,apellido:p.ape,telefono:p.tel||null,documento:p.doc}).eq("id",u.uid);
+  if(r.error){er(r.error.code==="23505"?"Ese documento ya está registrado en otra cuenta.":"No se pudo guardar: "+errTxt(r.error));return}
+  r=u.p?await sb.from("fichas").update({datos:p,contactos:cont}).eq("paciente_id",u.uid):await sb.from("fichas").insert({paciente_id:u.uid,datos:p,contactos:cont,manilla:u.man||{}});
+  if(r.error){er("No se pudo guardar: "+errTxt(r.error));return}
+ }catch(x){er(errTxt(x));return}
+ await cargaCuenta();renderPac();toast("Ficha guardada ✔");
+}
+async function descarga(nombre,blob){
+ try{
+  const dl=window.claude&&await window.claude.use("downloads");
+  if(dl){await dl.save({filename:nombre,data:blob});return true}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nombre;document.body.appendChild(a);a.click();a.remove();return true;
+ }catch(e){toast("No se pudo descargar. Toma una captura de pantalla.");return false}
+}
+function bajar(){
+ const cv=$("#qrbox canvas");
+ if(!cv){toast("Mantén presionado el QR para guardarlo");return}
+ const o=document.createElement("canvas");o.width=o.height=cv.width+40;
+ const x=o.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,o.width,o.height);x.drawImage(cv,20,20);
+ o.toBlob(b=>descarga("vitalink-qr.png",b));
+}
+
+/* ===== Acceso directo del paramédico, verificación facial y PDF ===== */
+/* Si es true, además del correo y la contraseña se pide verificar el rostro del paramédico antes de abrir fichas. */
+let EXIGIR_ROSTRO=(()=>{try{return localStorage.getItem("vl_exigir_rostro")==="1"}catch(e){return false}})();
+const VERIF_MIN=10;let parMem=null,pendCode=null,faceRP=null,pdfURL=null;
+function urlFicha(c){return location.href.split("#")[0].split("?")[0]+"?ficha="+encodeURIComponent(c)}
+function guardaSes(o){parMem=o;try{sessionStorage.setItem("vl_par",JSON.stringify(o))}catch(e){}}
+function borraSes(){parMem=null;try{sessionStorage.removeItem("vl_par")}catch(e){}}
+function parOK(){const u0=sesion();if(!EXIGIR_ROSTRO&&u0&&u0.rol==="paramedico"&&u0.estado==="aprobado")return{id:u0.uid,n:u0.nom,i:u0.inst,ts:Date.now()};let o=parMem;if(!o){try{o=JSON.parse(sessionStorage.getItem("vl_par")||"null")}catch(e){}}const u=sesion();return o&&u&&o.id===u.uid&&Date.now()-o.ts<VERIF_MIN*6e4?o:null}
+function pedirLogin(c){pendCode=c||null;modo="log";lastV=null;setTimeout(()=>show("gate"),0)}
+function pedirVerif(c){pendCode=c||null;lastV=null;show("verif")}
+async function abreFicha(c){$("#code").value=c;await consultar(c);if(ULT&&ULT.code===c)abrePDF(c)}
+async function entraFicha(raw){const m=String(codeFrom(raw)).toUpperCase().match(/VLQR-[A-Z0-9-]+/);
+ if(!m){libre=true;show("paramedico");return}
+ const c=m[0];
+ if(DB[c]){libre=true;show("paramedico");await abreFicha(c);return}
+ const u=sesion();
+ if(!u||u.rol!=="paramedico"){pedirLogin(c);return}
+ if(u.estado!=="aprobado"){show("paramedico");const mm=$("#msg");if(mm){mm.className="msg err";mm.textContent=u.estado==="bloqueado"?"⛔ Escaneaste el QR de un paciente, pero tu cuenta de paramédico está bloqueada. Comunícate con el administrador.":"⏳ Escaneaste el QR de un paciente, pero tu cuenta de paramédico aún no está aprobada. Cuando el administrador te apruebe, vuelve a escanear el QR."}return}
+ if(parOK()){show("paramedico");await abreFicha(c)}else pedirVerif(c)}
+function iniciaVerif(){
+ const u=sesion();
+ if(!u||u.rol!=="paramedico"){setTimeout(()=>pedirLogin(pendCode),0);return}
+ if(u.estado!=="aprobado"){toast("Tu cuenta aún no está aprobada por un administrador.");setTimeout(()=>show("paramedico"),0);return}
+ $("#vtxt").textContent=pendCode?"Para abrir la ficha del paciente ("+pendCode+"), mira a la cámara: te reconocemos de una vez.":"Verifica tu rostro de paramédico para consultar fichas de pacientes.";
+ $("#xv").parentElement.style.display="none";
+ if(!u.face){$("#xm").textContent="Tu cuenta no tiene un rostro registrado. Contacta al administrador.";$("#xb").hidden=true;return}
+ corre()}
+function corre(){reconoce($("#xv"),$("#xb"),$("#xm"),(f,ui)=>{
+  const u=sesion();if(!u||!u.face){ui.fail("No hay un rostro registrado en tu cuenta.");return}
+  if(sim(f.t,u.face.t)<.85){ui.fail("Reconocimiento fallido. Intenta nuevamente.");return}
+  ui.ok("Reconocimiento exitoso · "+u.nom);
+  guardaSes({id:u.uid,n:u.nom,i:u.inst,ts:Date.now()});
+  setTimeout(()=>{const c=pendCode;pendCode=null;show("paramedico");if(c)abreFicha(c)},800)})}
+function iniciaReg(){faceRP=null;["rp_nom","rp_ape","rp_doc","rp_inst","rp_lic","rp_tel","rp_mail","rp_pw","rp_pw2"].forEach(i=>$("#"+i).value="");$("#rp_ok").checked=false;$("#rpm").textContent="";
+ $("#rpf").textContent="🙂 Registrar mi rostro";$("#rpf").hidden=false;$("#rm").textContent="Mira al círculo y tu rostro se registra de una vez.";$("#rv").parentElement.style.display="none"}
+function pintaPar(){const b=$("#pstat");if(!b)return;const u=sesion(),q=parOK(),par=u&&u.rol==="paramedico";let h;
+ const sal='<button class="btn alt" id="pcs" type="button">Cerrar sesión</button>';
+ if(!par)h=`<div><b>🔒 Para ver fichas de pacientes registrados, inicia sesión como paramédico.</b><div class="msg" style="margin:4px 0 8px">Las fichas de demostración (Laura y Andrés) se abren sin iniciar sesión.</div><div class="row" style="margin:0"><button class="btn" id="pil" type="button">🔑 Iniciar sesión</button><button class="btn alt" id="prg" type="button">📝 Registrarme como paramédico</button></div></div>`;
+ else if(u.estado==="pendiente")h=`<div class="row" style="margin:0;justify-content:space-between;align-items:center"><div><b>⏳ Tu cuenta está pendiente de aprobación.</b><div class="msg" style="margin:2px 0 0">${esc(u.nom)}${u.inst?" · "+esc(u.inst):""}. Un administrador debe aprobarte para consultar fichas de pacientes.</div></div><div class="row" style="margin:0"><button class="btn" id="pact" type="button">🔄 Ya me aprobaron: actualizar</button>${sal}</div></div>`;
+ else if(u.estado==="bloqueado")h=`<div class="row" style="margin:0;justify-content:space-between;align-items:center"><div><b>⛔ Tu cuenta está bloqueada.</b><div class="msg" style="margin:2px 0 0">Comunícate con el administrador.</div></div>${sal}</div>`;
+ else if(!EXIGIR_ROSTRO)h=`<div class="row" style="margin:0;justify-content:space-between;align-items:center"><div><b>✅ Sesión iniciada:</b> ${esc(u.nom)}${u.inst?" · "+esc(u.inst):""}<div class="msg" style="margin:2px 0 0">Escanea el QR de un paciente con la cámara del celular: la ficha se abre directamente.</div></div>${sal}</div>`;
+ else if(q)h=`<div class="row" style="margin:0;justify-content:space-between;align-items:center"><div><b>✅ Paramédico verificado:</b> ${esc(q.n)}${q.i?" · "+esc(q.i):""}<div class="msg" style="margin:2px 0 0">Verificación válida hasta las ${new Date(q.ts+VERIF_MIN*6e4).toLocaleTimeString("es-CO",{hour:"numeric",minute:"2-digit"})}</div></div><div class="row" style="margin:0"><button class="btn alt" id="pcv" type="button">Cerrar verificación</button>${sal}</div></div>`;
+ else h=`<div class="row" style="margin:0;justify-content:space-between;align-items:center"><div><b>✅ Sesión iniciada:</b> ${esc(u.nom)}${u.inst?" · "+esc(u.inst):""}<div class="msg" style="margin:2px 0 0">Para abrir fichas, verifica tu rostro.</div></div><div class="row" style="margin:0"><button class="btn" id="pvv" type="button">🙂 Verificar mi rostro</button>${sal}</div></div>`;
+ b.innerHTML=h;
+ const a=(id,fn)=>{const e=$("#"+id);if(e)e.onclick=fn};
+ a("pil",()=>pedirLogin(null));a("prg",()=>{lastV=null;show("regpar")});a("pvv",()=>pedirVerif(null));
+ a("pact",async()=>{const b=$("#pact");b.disabled=true;await cargaCuenta();const q=sesion();pintaPar();toast(q&&q.estado==="aprobado"?"✅ ¡Tu cuenta ya está aprobada!":"Tu cuenta sigue pendiente de aprobación.")});a("pcv",()=>{borraSes();pintaPar()});a("pcs",async()=>{await cerrarSesion();show("gate")})}
+/* ===== Comprobante de pago en PDF ===== */
+const PAGO_DEMO=true;
+function pdfArmar(pgs,titulo){
+ const W=595,H=842,tot=pgs.length,objs=[],kids=pgs.map((_,i)=>(5+i*2)+" 0 R").join(" ");
+ objs[1]="<< /Type /Catalog /Pages 2 0 R >>";objs[2]=`<< /Type /Pages /Kids [${kids}] /Count ${tot} >>`;
+ objs[3]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";objs[4]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+ pgs.forEach((g,i)=>{const d=g.join("\n");objs[5+i*2]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${6+i*2} 0 R >>`;objs[6+i*2]=`<< /Length ${d.length} >>\nstream\n${d}\nendstream`});
+ const N=4+tot*2+1;objs[N]=`<< /Title (${titulo}) /Producer (VitaLink QR) >>`;
+ let out="%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";const off=[];
+ for(let i=1;i<=N;i++){off[i]=out.length;out+=`${i} 0 obj\n${objs[i]}\nendobj\n`}
+ const xr=out.length;out+=`xref\n0 ${N+1}\n0000000000 65535 f \n`;for(let i=1;i<=N;i++)out+=String(off[i]).padStart(10,"0")+" 00000 n \n";
+ out+=`trailer\n<< /Size ${N+1} /Root 1 0 R /Info ${N} 0 R >>\nstartxref\n${xr}\n%%EOF`;
+ return Uint8Array.from(out,c=>c.charCodeAt(0))}
+function pdfComprobante(c){
+ const MAP={"\u2018":"\x91","\u2019":"\x92","\u201C":"\x93","\u201D":"\x94","\u2022":"\x95","\u2013":"\x96","\u2014":"\x97","\u20AC":"\x80"},
+  san=x=>String(x==null?"":x).replace(/[\u2018\u2019\u201C\u201D\u2022\u2013\u2014\u20AC]/g,k=>MAP[k]).replace(/[^\x00-\xFF]/g,"").replace(/[\r\n]+/g," ").trim(),
+  esc=x=>x.replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)"),
+  wrap=(x,n)=>{const w=x.split(/\s+/),o=[];let l="";for(const t of w){if((l+" "+t).trim().length>n){if(l)o.push(l);l=t}else l=(l+" "+t).trim()}if(l)o.push(l);return o.length?o:["-"]},
+  W=595,H=842,M=44,pg=[],TEAL="0.055 0.455 0.565",GRIS="0.4 0.45 0.5",INK="0.06 0.1 0.15";
+ const txt=(x,px,py,sz,b,col)=>pg.push(`BT /F${b?2:1} ${sz} Tf ${col||"0 0 0"} rg ${px} ${py} Td (${esc(san(x))}) Tj ET`),
+  rect=(px,py,w,h,fill,stroke)=>pg.push(`${fill?fill+" rg ":""}${stroke?stroke+" RG 1.2 w ":""}${px} ${py} ${w} ${h} re ${fill&&stroke?"B":fill?"f":"S"}`),
+  linea=(y,col)=>pg.push(`${col} RG 0.7 w ${M} ${y} m ${W-M} ${y} l S`);
+ // cabecera
+ rect(0,H-104,W,104,TEAL);
+ txt("VitaLink QR",M,H-48,28,1,"1 1 1");txt("Comprobante de pago",M,H-72,13,0,"0.85 0.95 0.97");
+ txt("N.º "+c.no,W-M-190,H-48,10.5,1,"1 1 1");txt(c.fh,W-M-190,H-64,9,0,"0.85 0.95 0.97");
+ // estado y total
+ rect(M,H-152,150,30,"0.09 0.5 0.25");txt("PAGO APROBADO",M+16,H-142,12,1,"1 1 1");
+ txt("TOTAL PAGADO",W-M-150,H-128,8,1,GRIS);txt(c.total,W-M-150,H-152,26,1,INK);
+ // datos del pago
+ let y=H-196;
+ txt("DATOS DEL PAGO",M,y,9,1,TEAL);y-=10;linea(y,"0.82 0.86 0.89");
+ const celdas=[["Cliente",c.n,"Correo",c.e],["Concepto","Manilla VitaLink QR + 1 mes de acceso","Pulsera",c.pul],["Medio de pago",c.med,"Pagado desde",c.nm],["Fecha y hora",c.fh,"N.º de comprobante",c.no]];
+ celdas.forEach(f=>{y-=18;txt(f[0].toUpperCase(),M,y,7.5,1,GRIS);txt(f[2].toUpperCase(),M+268,y,7.5,1,GRIS);
+  const a=wrap(san(f[1])||"-",42),b=wrap(san(f[3])||"-",42),n=Math.max(a.length,b.length);
+  a.forEach((l,i)=>txt(l,M,y-14-i*13,11,0,INK));b.forEach((l,i)=>txt(l,M+268,y-14-i*13,11,0,INK));
+  y-=14+n*13+4;linea(y,"0.9 0.92 0.94")});
+ // datos para ingresar
+ y-=22;const bh=160;
+ rect(M,y-bh,W-2*M,bh,"0.92 0.97 0.98",TEAL);
+ txt("TUS DATOS PARA INGRESAR",M+16,y-22,10.5,1,TEAL);
+ txt("USUARIO",M+16,y-44,8,1,GRIS);txt(c.us,M+16,y-64,20,1,INK);
+ txt("CORREO PARA INGRESAR",M+16,y-88,8,1,GRIS);txt(c.e,M+16,y-106,15,1,INK);
+ txt("CONTRASEÑA",M+16,y-128,8,1,GRIS);txt("La que elegiste al registrarte (por seguridad no se muestra aquí).",M+16,y-144,10.5,0,INK);
+ y-=bh+30;
+ // qué sigue
+ txt("¿QUÉ SIGUE?",M,y,9,1,TEAL);y-=8;linea(y,"0.82 0.86 0.89");y-=6;
+ const pasos=["Entra a "+(c.sitio||"la página de VitaLink QR")+" con tu correo y la contraseña que elegiste.","En tu portal pulsa «Generar mi código QR»: ahí verás tu código único y el día y la hora para reclamar tu manilla.","Reclama tu manilla en el punto de entrega y lleva tu documento de identidad.","Guarda este comprobante: te sirve para recordar tu usuario y el correo con el que ingresas."];
+ pasos.forEach((t,i)=>{const ls=wrap(san(t),86);y-=16;
+  rect(M,y-3,16,16,TEAL);txt(String(i+1),M+5.2,y+1.5,9.5,1,"1 1 1");
+  ls.forEach((l,j)=>txt(l,M+26,y-j*13,10.5,0,INK));y-=(ls.length-1)*13+8});
+ // pie
+ linea(64,"0.82 0.86 0.89");
+ txt("Documento generado por VitaLink QR el "+new Date().toLocaleString("es-CO"),M,50,8,0,GRIS);
+ if(PAGO_DEMO)txt("Pago de demostración: no se realizó ningún cobro real.",M,38,8,1,"0.7 0.1 0.1");
+ return pdfArmar([pg],"Comprobante de pago VitaLink QR")}
+function imprimePDF(blob){
+ const url=URL.createObjectURL(blob);
+ if(!navigator.pdfViewerEnabled){window.open(url,"_blank");return}
+ const f=document.createElement("iframe");f.style.cssText="position:fixed;right:0;bottom:0;width:0;height:0;border:0";f.src=url;
+ f.onload=()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){window.open(url,"_blank")}setTimeout(()=>{f.remove();URL.revokeObjectURL(url)},120000)};
+ document.body.appendChild(f)}
+
+function pdfFicha(p,quien){
+ const U=x=>String(x==null?"":x).replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'"),
+  MAP={"\u2018":"\x91","\u2019":"\x92","\u201C":"\x93","\u201D":"\x94","\u2022":"\x95","\u2013":"\x96","\u2014":"\x97","\u20AC":"\x80"},
+  san=x=>U(x).replace(/[\u2018\u2019\u201C\u201D\u2022\u2013\u2014\u20AC]/g,c=>MAP[c]).replace(/[^\x00-\xFF]/g,"").replace(/[\r\n]+/g," ").trim(),
+  esc=x=>x.replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)"),
+  wrap=(x,n)=>{const w=x.split(/\s+/),o=[];let l="";for(const t of w){if((l+" "+t).trim().length>n){if(l)o.push(l);l=t}else l=(l+" "+t).trim()}if(l)o.push(l);return o.length?o:["-"]},
+  W=595,H=842,M=44,pgs=[];let pg,y;
+ const np=()=>{pg=[];pgs.push(pg);y=H-M},
+  txt=(x,px,py,sz,b,c)=>pg.push(`BT /F${b?2:1} ${sz} Tf ${c||"0 0 0"} rg ${px} ${py} Td (${esc(san(x))}) Tj ET`),
+  rect=(px,py,w,h,fill,stroke)=>pg.push(`${fill?fill+" rg ":""}${stroke?stroke+" RG ":""}${px} ${py} ${w} ${h} re ${fill&&stroke?"B":fill?"f":"S"}`),
+  ensure=h=>{if(y-h<M+30){np();txt("VitaLink QR · Ficha de emergencia (continuación)",M,y,10,1,"0.4 0.45 0.5");y-=24}},
+  sec=(lab,val,alert)=>{const v=san(val)||"-",ls=wrap(v,92),h=20+ls.length*12.5+3;ensure(h+4);
+   rect(M,y-h,W-2*M,h,alert?"1 0.93 0.93":"1 1 1",alert?"0.85 0.2 0.2":"0.82 0.86 0.89");
+   txt(lab.toUpperCase(),M+10,y-12,7,1,alert?"0.7 0.1 0.1":"0.4 0.45 0.5");
+   ls.forEach((l,i)=>txt(l,M+10,y-24-i*12.5,10.5,alert,alert?"0.6 0.05 0.05":"0.06 0.1 0.15"));y-=h+4};
+ np();
+ rect(0,H-78,W,78,"0.055 0.455 0.565");
+ txt("VitaLink QR",M,H-38,22,1,"1 1 1");txt("Ficha de emergencia médica",M,H-58,11.5,0,"1 1 1");
+ txt("Generada: "+new Date().toLocaleString("es-CO"),W-M-190,H-58,8.5,0,"1 1 1");
+ y=H-78-30;
+ const nom=san(p.n)||"Paciente",edadTxt=p.nac?(edad(p.nac)+" años"):"";
+ txt(nom,M,y,20,1,"0.06 0.1 0.15");
+ txt(("CC "+san(p.doc))+(edadTxt?" · "+edadTxt:"")+(p.nac?" · Nac. "+san(p.nac):""),M,y-20,11,0,"0.35 0.4 0.45");
+ rect(W-M-120,y-48,120,62,"1 0.95 0.95","0.78 0.07 0.12");
+ txt("GRUPO SANGUINEO".replace("SANGUINEO","SANGUÍNEO"),W-M-112,y-1,7.5,1,"0.5 0.1 0.1");
+ txt(san(p.sangre)||"?",W-M-112,y-38,30,1,"0.78 0.07 0.12");
+ y-=62;
+ const ninguna=/ninguna/i.test(p.alergias||"");
+ sec("Alergias",p.alergias||"No registradas",!ninguna);
+ if(p.res)sec("Restricciones médicas o creencias",p.res,true);
+ sec("Enfermedades",p.enf||"Ninguna registrada");
+ sec("Medicamentos",p.med||"Ninguno");
+ if(p.dis)sec("Dispositivos médicos",p.dis);
+ if(p.cir)sec("Cirugías u hospitalizaciones",p.cir);
+ if(p.pes||p.est)sec("Peso y estatura",(p.pes?san(p.pes)+" kg":"-")+"  ·  "+(p.est?san(p.est)+" cm":"-"));
+ if(p.eps)sec("EPS o seguro médico",p.eps+(p.afi?"  ·  Afiliación: "+san(p.afi):""));
+ if(p.mdc)sec("Médico tratante",p.mdc);
+ if(p.vac)sec("Vacunas",p.vac);
+ if(p.don)sec("Donante de órganos",p.don);
+ if(p.obs)sec("Observaciones",p.obs);
+ ensure(40);txt("CONTACTOS DE EMERGENCIA",M,y-4,8.5,1,"0.4 0.45 0.5");y-=18;
+ (p.cont||[]).forEach(c=>{ensure(36);rect(M,y-32,W-2*M,32,"1 1 1","0.82 0.86 0.89");
+  txt(san(c.n)+(c.p?" ("+san(c.p)+")":""),M+10,y-13,11,1,"0.06 0.1 0.15");txt("Tel. "+san(c.t),M+10,y-26,10,0,"0.05 0.45 0.3");y-=36});
+ const tot=pgs.length;
+ pgs.forEach((g,i)=>{pg=g;txt("Consulta registrada el "+new Date().toLocaleString("es-CO")+" por "+(quien||"-")+".",M,26,7.5,0,"0.45 0.5 0.55");
+  txt("Documento confidencial para atención de emergencias · VitaLink QR · Página "+(i+1)+" de "+tot,M,15,7.5,0,"0.45 0.5 0.55")});
+ const objs=[],kids=pgs.map((_,i)=>(5+i*2)+" 0 R").join(" ");
+ objs[1]="<< /Type /Catalog /Pages 2 0 R >>";objs[2]=`<< /Type /Pages /Kids [${kids}] /Count ${tot} >>`;
+ objs[3]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";objs[4]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+ pgs.forEach((g,i)=>{const d=g.join("\n");objs[5+i*2]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${6+i*2} 0 R >>`;objs[6+i*2]=`<< /Length ${d.length} >>\nstream\n${d}\nendstream`});
+ const N=4+tot*2+1;objs[N]="<< /Title (Ficha de emergencia VitaLink QR) /Producer (VitaLink QR) >>";
+ let out="%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";const off=[];
+ for(let i=1;i<=N;i++){off[i]=out.length;out+=`${i} 0 obj\n${objs[i]}\nendobj\n`}
+ const xr=out.length;out+=`xref\n0 ${N+1}\n0000000000 65535 f \n`;for(let i=1;i<=N;i++)out+=String(off[i]).padStart(10,"0")+" 00000 n \n";
+ out+=`trailer\n<< /Size ${N+1} /Root 1 0 R /Info ${N} 0 R >>\nstartxref\n${xr}\n%%EOF`;
+ return Uint8Array.from(out,c=>c.charCodeAt(0))}
+function abrePDF(code){
+ const p=DB[code]||(ULT&&ULT.code===code?ULT.p:null);if(!p)return;
+ const q=parOK(),bytes=pdfFicha(p,q?q.n+(q.i?" ("+q.i+")":""):"modo demostración"),blob=new Blob([bytes],{type:"application/pdf"});
+ if(pdfURL)URL.revokeObjectURL(pdfURL);pdfURL=URL.createObjectURL(blob);cierraPDF();
+ const nom="ficha-emergencia-"+String(p.doc||code).replace(/\W/g,"")+".pdf",o=document.createElement("div");o.id="pdfov";
+ o.innerHTML=`<div class="pdfbar"><b>📄 Ficha de emergencia (PDF)</b><div class="row" style="margin:0"><button class="btn" id="pdl" type="button">⬇️ Descargar</button><a class="btn alt" href="${pdfURL}" target="_blank" rel="noopener">↗ Abrir</a><button class="btn alt" id="pcl" type="button">✖ Cerrar</button></div></div>${navigator.pdfViewerEnabled?`<iframe src="${pdfURL}" title="Ficha de emergencia"></iframe>`:`<div class="pdfno"><div>Tu navegador no muestra el PDF aquí.<br>Toca <b>Abrir</b> o <b>Descargar</b> para ver la ficha completa.</div></div>`}`;
+ document.body.appendChild(o);$("#pdl").onclick=()=>descarga(nom,blob);$("#pcl").onclick=cierraPDF}
+function cierraPDF(){const o=$("#pdfov");if(o)o.remove()}
+$("#xb").onclick=corre;$("#xreg").onclick=()=>{lastV=null;show("regpar")};$("#xcan").onclick=()=>{pendCode=null;show(libre?"paramedico":"gate")};
+$("#rpback").onclick=()=>{if(pendCode){lastV=null;show("verif")}else show(libre?"paramedico":"gate")};
+$("#rpf").onclick=()=>reconoce($("#rv"),$("#rpf"),$("#rm"),(f,ui)=>{faceRP=f;ui.ok("Reconocimiento exitoso · rostro registrado");$("#rpf").textContent="🔄 Registrar de nuevo"});
+$("#rpgo").onclick=async()=>{const g=i=>$("#"+i).value.trim(),m=$("#rpm"),er=t=>{m.textContent=t;toast(t)};
+ if(!g("rp_nom")||!g("rp_ape")||!g("rp_doc")||!g("rp_inst"))return er("Completa nombres, apellidos, documento e institución.");
+ if(!faceRP)return er("Registra tu rostro: toca «Registrar mi rostro» y mira al círculo.");
+ if(!$("#rp_ok").checked)return er("Debes aceptar la declaración para continuar.");
+ if(!sb)return er("No hay conexión con el servidor. Revisa tu internet.");
+ const mail=g("rp_mail").toLowerCase(),pw=$("#rp_pw").value;
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail))return er("Escribe un correo válido.");
+ if(pw.length<8)return er("La contraseña debe tener al menos 8 caracteres.");
+ if(pw!==$("#rp_pw2").value)return er("Las contraseñas no coinciden.");
+ m.textContent="Creando tu cuenta…";
+ try{
+  let ses=(await sb.auth.getSession()).data.session;
+  if(!ses||ses.user.email!==mail){
+   const r=await sb.auth.signUp({email:mail,password:pw});
+   if(r.error)return er(errTxt(r.error));
+   ses=r.data.session;
+   if(!ses)return er("Te enviamos un correo de confirmación. Para continuar, desactiva la confirmación por correo en Supabase o confirma tu correo.");
+  }
+  const r2=await sb.rpc("registrar_paramedico",{p_nombre:g("rp_nom"),p_apellido:g("rp_ape"),p_documento:g("rp_doc"),p_institucion:g("rp_inst"),p_licencia:g("rp_lic"),p_telefono:g("rp_tel")});
+  if(r2.error)return er(r2.error.code==="23505"?"Ese documento ya está registrado.":errTxt(r2.error));
+  const r3=await sb.from("rostros").upsert({user_id:ses.user.id,plantilla:faceRP.t});
+  if(r3.error)return er("No se pudo guardar tu rostro: "+errTxt(r3.error));
+ }catch(x){return er(errTxt(x))}
+ await cargaCuenta();stopF();toast("✅ Registro enviado. Un administrador debe aprobar tu cuenta.");show("paramedico")};
+renderPac();
+document.querySelectorAll("[data-demo]").forEach(b=>b.onclick=()=>demo(b.dataset.demo));
+document.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{const a=b.dataset.act;if(a==="inicio")return show("inicio");if(a==="par"){const q=sesion();if(q&&q.rol==="paciente")return toast("Estás ingresando como paciente. Cierra sesión para entrar como paramédico.");return show("paramedico")}if(a==="adm"){const q=sesion();if(!q){modo="log";return show("gate")}return show("admin")}if(a==="libre"){libre=true;return show("paramedico")}show("paciente")});
+$("#home").onclick=()=>show("inicio");
+/* ===== Portal del administrador ===== */
+async function renderAdm(){
+ const box=$("#adm"),u=sesion();
+ if(!u||u.rol!=="admin"){box.innerHTML=`<div class="card"><h3 style="margin:0 0 8px">🛡️ Portal del administrador</h3><p class="msg">Inicia sesión con una cuenta de administrador.</p><div class="row"><button class="btn" id="ago" type="button">🔑 Iniciar sesión</button></div></div>`;$("#ago").onclick=()=>{modo="log";show("gate")};return}
+ box.innerHTML='<div class="card"><div class="msg">⏳ Cargando…</div></div>';
+ let pr,ac,pc;
+ try{[pr,ac,pc]=await Promise.all([sb.rpc("admin_paramedicos"),sb.from("accesos").select("*").order("fecha",{ascending:false}).limit(25),sb.from("perfiles").select("id",{count:"exact",head:true}).eq("rol","paciente")])}
+ catch(e){box.innerHTML=`<div class="card"><div class="msg err">${esc(errTxt(e))}</div></div>`;return}
+ const par=pr.data||[],acc=ac.data||[],np=pc.count||0,nom={};par.forEach(x=>nom[x.id]=x.nombre+" "+x.apellido);
+ const cnt=e=>par.filter(x=>x.estado===e).length,fh=t=>new Date(t).toLocaleString("es-CO");
+ const btn=(x,e,t,c)=>x.estado===e?"":`<button class="btn ${c}" style="padding:6px 10px" data-ap="${esc(x.id)}" data-e="${e}" type="button">${t}</button>`;
+ box.innerHTML=`<div class="card"><div class="row" style="margin:0;justify-content:space-between;align-items:center"><b>🛡️ ${esc(u.mail)}</b><button class="btn alt" id="as" type="button">Cerrar sesión</button></div><div class="msg" style="margin:8px 0 0">🔒 Los administradores se crean solo directamente en Supabase. Desde esta página no se puede dar ese rol a nadie: aquí únicamente se aprueba, rechaza, bloquea o reactiva a los paramédicos.</div></div>
+ <div class="portals" style="margin-bottom:14px">${[["Pacientes",np],["Paramédicos aprobados",cnt("aprobado")],["Pendientes",cnt("pendiente")],["Bloqueados",cnt("bloqueado")]].map(x=>`<div class="card" style="margin:0;text-align:center"><div class="blood" style="font-size:36px">${x[1]}</div><small>${x[0]}</small></div>`).join("")}</div>
+ <div class="card"><h3 style="margin:0 0 8px">🚑 Paramédicos</h3>${par.length?`<div style="overflow-x:auto"><table class="tb"><tr><th>Nombre</th><th>Documento</th><th>Institución</th><th>Licencia</th><th>Estado</th><th>Acción</th></tr>${par.map(x=>`<tr><td>${esc(x.nombre+" "+x.apellido)}</td><td>${esc(x.documento||"—")}</td><td>${esc(x.institucion||"—")}</td><td>${esc(x.licencia||"—")}</td><td><b>${esc(x.estado)}</b></td><td><div class="row" style="margin:0">${x.estado==="pendiente"?btn(x,"aprobado","✅ Aprobar","ok")+btn(x,"bloqueado","❌ Rechazar","alt"):x.estado==="aprobado"?btn(x,"bloqueado","⛔ Bloquear","alt"):btn(x,"aprobado","✅ Reactivar","ok")}</div></td></tr>`).join("")}</table></div>`:'<div class="msg">Aún no hay paramédicos registrados.</div>'}</div>
+ <div class="card"><h3 style="margin:0 0 8px">📋 Últimas consultas de fichas</h3>${acc.length?`<div style="overflow-x:auto"><table class="tb"><tr><th>Fecha</th><th>Paramédico</th><th>Código</th><th>Método</th><th>Resultado</th></tr>${acc.map(x=>`<tr><td>${esc(fh(x.fecha))}</td><td>${esc(nom[x.paramedico_id]||"—")}</td><td>${esc(x.codigo)}</td><td>${esc(x.metodo)}</td><td>${x.emergencia?"<b>🚨 Emergencia registrada</b>":x.encontrado?"✔ Encontrada":"✖ Sin resultado"}</td></tr>`).join("")}</table></div>`:'<div class="msg">Todavía no hay consultas.</div>'}</div>`;
+ $("#as").onclick=async()=>{await cerrarSesion();show("gate")};
+ box.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await sb.rpc("admin_estado_paramedico",{p_id:b.dataset.ap,p_estado:b.dataset.e});if(r.error){toast(errTxt(r.error));b.disabled=false;return}toast("Estado actualizado ✔");renderAdm()});
+}
+(async()=>{
+ await cargaCuenta();
+ let u=sesion();
+ if(u&&u.rol==="paciente"&&u.ven&&Date.now()>u.ven){await cerrarSesion();modo="log";toast("Tu acceso venció. Compra una nueva manilla para volver a entrar.");u=null}
+ const qf=new URLSearchParams(location.search).get("ficha");
+ if(qf){try{history.replaceState(null,"",location.pathname)}catch(e){}await entraFicha(qf)}
+ else show(location.hash.slice(1)||"inicio");
+})();
+</script>
+</body>
+</html>
